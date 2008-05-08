@@ -44,51 +44,61 @@ namespace Phanfare.ExternalAPI
 
 		public Album[] GetAlbumList( long userId )
 		{
-			return this.GetAlbumList( userId, null, null );
+			return this.GetAlbumList( userId, false, null, null );
 		}
 
-		public Album[] GetAlbumList( long userId, DateTime modifiedAfter )
+		public Album[] GetAlbumList( long userId, bool externalLinks )
 		{
-			return this.GetAlbumList( userId, modifiedAfter, null );
+			return this.GetAlbumList( userId, externalLinks, null, null );
 		}
 
-		public Album[] GetAlbumList( long userId, int year )
+		public Album[] GetAlbumList( long userId, bool externalLinks, DateTime modifiedAfter )
 		{
-			return this.GetAlbumList( userId, null, year );
+			return this.GetAlbumList( userId, externalLinks, modifiedAfter, null );
 		}
 
-		public Album[] GetAlbumList( long userId, DateTime? modifiedAfter, int? year )
+		public Album[] GetAlbumList( long userId, bool externalLinks, int year )
+		{
+			return this.GetAlbumList( userId, externalLinks, null, year );
+		}
+
+		public Album[] GetAlbumList( long userId, bool externalLinks, DateTime? modifiedAfter, int? year )
 		{
 			this.AssertSessionValid();
 			this.AssertParameterValidID( "userId", userId );
 
-			return this.GetAlbumList( "target_uid", userId, modifiedAfter, year );
+			return this.GetAlbumList( "target_uid", userId, externalLinks, modifiedAfter, year );
 		}
 
 		public Album[] GetGroupAlbumList( long groupId )
 		{
-			return this.GetGroupAlbumList( groupId, null, null );
+			return this.GetGroupAlbumList( groupId, false, null, null );
 		}
 
-		public Album[] GetGroupAlbumList( long groupId, DateTime modifiedAfter )
+		public Album[] GetGroupAlbumList( long groupId, bool externalLinks )
 		{
-			return this.GetGroupAlbumList( groupId, modifiedAfter, null );
+			return this.GetGroupAlbumList( groupId, externalLinks, null, null );
 		}
 
-		public Album[] GetGroupAlbumList( long groupId, int year )
+		public Album[] GetGroupAlbumList( long groupId, bool externalLinks, DateTime modifiedAfter )
 		{
-			return this.GetGroupAlbumList( groupId, null, year );
+			return this.GetGroupAlbumList( groupId, externalLinks, modifiedAfter, null );
 		}
 
-		public Album[] GetGroupAlbumList( long groupId, DateTime? modifiedAfter, int? year )
+		public Album[] GetGroupAlbumList( long groupId, bool externalLinks, int year )
+		{
+			return this.GetGroupAlbumList( groupId, externalLinks, null, year );
+		}
+
+		public Album[] GetGroupAlbumList( long groupId, bool externalLinks, DateTime? modifiedAfter, int? year )
 		{
 			this.AssertSessionValid();
 			this.AssertParameterValidID( "groupId", groupId );
 
-			return this.GetAlbumList( "group_id", groupId, modifiedAfter, year );
+			return this.GetAlbumList( "group_id", groupId, externalLinks, modifiedAfter, year );
 		}
 
-		private Album[] GetAlbumList( string parameterName, long value, DateTime? modifiedAfter, int? year )
+		private Album[] GetAlbumList( string parameterName, long value, bool externalLinks, DateTime? modifiedAfter, int? year )
 		{
 			Hashtable ht = this.MethodCall( "getalbumlist" );
 			ht[ parameterName ] = value;
@@ -96,6 +106,8 @@ namespace Phanfare.ExternalAPI
 				ht[ "modified_after" ] = modifiedAfter.Value.ToUniversalTime();
 			if( year != null )
 				ht[ "year" ] = year.Value;
+			if( externalLinks == true )
+				ht[ "external_links" ] = externalLinks;
 
 			XmlDocument doc = this.MakeRequest( ht );
 			return this.ReadResponseList<Album>( doc, "albums", "num_albums", Album.FromXML );

@@ -139,7 +139,7 @@ namespace Phanfare.ExternalAPI.Tests
 
 			long userId = session.UserID;
 			int year = 2008;
-			Album[] actual = target.GetAlbumList( userId, year );
+			Album[] actual = target.GetAlbumList( userId, true, year );
 			Assert.IsNotNull( actual );
 			Assert.AreNotEqual( actual.Length, 0 );
 		}
@@ -157,7 +157,26 @@ namespace Phanfare.ExternalAPI.Tests
 
 			long userId = session.UserID;
 			DateTime modifiedAfter = DateTime.Now.Subtract( new TimeSpan( 20, 0, 0, 0 ) );
-			Album[] actual = target.GetAlbumList( userId, modifiedAfter );
+			Album[] actual = target.GetAlbumList( userId, true, modifiedAfter );
+			Assert.IsNotNull( actual );
+			Assert.AreNotEqual( actual.Length, 0 );
+		}
+
+		/// <summary>
+		///A test for GetAlbumList
+		///</summary>
+		[TestMethod()]
+		public void GetAlbumListTest4()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			long userId = session.UserID;
+			DateTime modifiedAfter = DateTime.Now.Subtract( new TimeSpan( 20, 0, 0, 0 ) );
+			int year = 2008;
+			Album[] actual = target.GetAlbumList( userId, true, modifiedAfter, year );
 			Assert.IsNotNull( actual );
 			Assert.AreNotEqual( actual.Length, 0 );
 		}
@@ -783,7 +802,7 @@ namespace Phanfare.ExternalAPI.Tests
 			Nullable<int> year = new Nullable<int>();
 			Album[] expected = null;
 			Album[] actual;
-			actual = target.GetGroupAlbumList( groupId, modifiedAfter, year );
+			actual = target.GetGroupAlbumList( groupId, true, modifiedAfter, year );
 			Assert.AreEqual( expected, actual );
 			Assert.Inconclusive( "Verify the correctness of this test method." );
 		}
@@ -801,7 +820,7 @@ namespace Phanfare.ExternalAPI.Tests
 			int year = 0;
 			Album[] expected = null;
 			Album[] actual;
-			actual = target.GetGroupAlbumList( groupId, year );
+			actual = target.GetGroupAlbumList( groupId, true, year );
 			Assert.AreEqual( expected, actual );
 			Assert.Inconclusive( "Verify the correctness of this test method." );
 		}
@@ -819,7 +838,7 @@ namespace Phanfare.ExternalAPI.Tests
 			DateTime modifiedAfter = new DateTime();
 			Album[] expected = null;
 			Album[] actual;
-			actual = target.GetGroupAlbumList( groupId, modifiedAfter );
+			actual = target.GetGroupAlbumList( groupId, true, modifiedAfter );
 			Assert.AreEqual( expected, actual );
 			Assert.Inconclusive( "Verify the correctness of this test method." );
 		}

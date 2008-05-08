@@ -50,9 +50,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AuthoringTests.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Phanfare.ExternalAPI\Phanfare.ExternalAPI.csproj">
       <Project>{79EE5212-E6C6-42BC-BF47-15813C936259}</Project>
       <Name>Phanfare.ExternalAPI</Name>

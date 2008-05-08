@@ -26,6 +26,7 @@ namespace Phanfare.ExternalAPI
 		public string URL { get; set; }
 		public long OwnerID { get; set; }
 
+		public ImageInfo LeadImage { get; set; }
 		public Section[] Sections { get; set; }
 		public Group[] Groups { get; set; }
 
@@ -43,6 +44,10 @@ namespace Phanfare.ExternalAPI
 			album.AutoDate = el.GetAttributeBoolean( "auto_date" );
 			album.URL = el.GetAttribute( "album_url" );
 			album.OwnerID = el.GetAttributeInt64( "owner_uid" );
+
+			XmlElement leadImageElement = el[ "imageinfo" ];
+			if( leadImageElement != null )
+				album.LeadImage = ImageInfo.FromXML( leadImageElement );
 
 			XmlElement sectionsElement = el[ "sections" ];
 			album.Sections = sectionsElement.ReadList<Section>( "num_sections", Section.FromXML );
