@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phanfare.ExternalAPI", "Phanfare.ExternalAPI\Phanfare.ExternalAPI.csproj", "{79EE5212-E6C6-42BC-BF47-15813C936259}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phanfare.ExternalAPI.Tests", "Phanfare.ExternalAPI.Tests\Phanfare.ExternalAPI.Tests.csproj", "{89FB77E1-3233-4B30-A7BD-91D6EFE54A31}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1BB7ABD0-F338-4AFF-AE3E-82A17E182087}"
+	ProjectSection(SolutionItems) = preProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{79EE5212-E6C6-42BC-BF47-15813C936259}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79EE5212-E6C6-42BC-BF47-15813C936259}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79EE5212-E6C6-42BC-BF47-15813C936259}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79EE5212-E6C6-42BC-BF47-15813C936259}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89FB77E1-3233-4B30-A7BD-91D6EFE54A31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89FB77E1-3233-4B30-A7BD-91D6EFE54A31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89FB77E1-3233-4B30-A7BD-91D6EFE54A31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89FB77E1-3233-4B30-A7BD-91D6EFE54A31}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
