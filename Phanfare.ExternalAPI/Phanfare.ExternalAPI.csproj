@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Album.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="NewsItem.cs" />
     <Compile Include="PhanfareException.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="GroupInfo.cs" />

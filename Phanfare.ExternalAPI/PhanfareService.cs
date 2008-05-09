@@ -65,5 +65,35 @@ namespace Phanfare.ExternalAPI
 
 			XmlDocument doc = this.MakeRequest( ht );
 		}
+
+		public NewsItem[] GetNewsFeed()
+		{
+			return this.GetNewsFeed( null, null );
+		}
+
+		public NewsItem[] GetNewsFeed( int maximumItems )
+		{
+			return this.GetNewsFeed( maximumItems, null );
+		}
+
+		public NewsItem[] GetNewsFeed( DateTime showSince )
+		{
+			return this.GetNewsFeed( null, showSince );
+		}
+
+		public NewsItem[] GetNewsFeed( int? maximumItems, DateTime? showSince )
+		{
+			this.AssertSessionValid();
+
+			Hashtable ht = this.MethodCall( "getnewsfeed" );
+			if( maximumItems != null )
+				ht[ "maximum_item_count" ] = maximumItems.Value;
+			if( showSince != null )
+				ht[ "show_since" ] = showSince.Value;
+
+			XmlDocument doc = this.MakeRequest( ht );
+			NewsItem[] items = this.ReadResponseList<NewsItem>( doc, "newsfeed", "num_items", NewsItem.FromXML );
+			return items;
+		}
 	}
 }
