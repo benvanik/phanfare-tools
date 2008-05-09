@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<appSettings>
+		<add key="ApiKey" value="xxx"/>
+		<add key="ApiSecret" value="xxx"/>
+		<add key="EmailAddress" value="xxx"/>
+		<add key="Password" value="xxx"/>
+	</appSettings>
+</configuration>

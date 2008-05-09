@@ -5,6 +5,7 @@ using System.Net;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Phanfare.ExternalAPI;
+using System.Configuration;
 
 namespace Phanfare.ExternalAPI.Tests
 {
@@ -26,11 +27,16 @@ namespace Phanfare.ExternalAPI.Tests
 		//You can use the following additional attributes as you write your tests:
 		//
 		//Use ClassInitialize to run code before running the first test in the class
-		//[ClassInitialize()]
-		//public static void MyClassInitialize(TestContext testContext)
-		//{
-		//}
-		//
+		[ClassInitialize()]
+		public static void MyClassInitialize( TestContext testContext )
+		{
+			AppSettingsReader reader = new AppSettingsReader();
+			ApiKey = ( string )reader.GetValue( "ApiKey", typeof( string ) );
+			ApiSecret = ( string )reader.GetValue( "ApiSecret", typeof( string ) );
+			EmailAddress = ( string )reader.GetValue( "EmailAddress", typeof( string ) );
+			Password = ( string )reader.GetValue( "Password", typeof( string ) );
+		}
+
 		//Use ClassCleanup to run code after all tests in a class have run
 		//[ClassCleanup()]
 		//public static void MyClassCleanup()
@@ -51,11 +57,11 @@ namespace Phanfare.ExternalAPI.Tests
 		//
 		#endregion
 
-		private const string ApiKey = "z4JFdIqyWEYKw943UvZi";
-		private const string ApiSecret = "8qzZ8RZ_Occ8i9IgUnyo";
+		private static string ApiKey;
+		private static string ApiSecret;
 
-		private const string EmailAddress = "ben@phanfare.com";
-		private const string Password = "debug";
+		private static string EmailAddress;
+		private static string Password;
 
 		/// <summary>
 		///A test for Authenticate
@@ -183,7 +189,74 @@ namespace Phanfare.ExternalAPI.Tests
 
 		#endregion
 
+		#region GetNewsFeed
 
+		/// <summary>
+		///A test for GetNewsFeed
+		///</summary>
+		[TestMethod()]
+		public void GetNewsFeedTest3()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			DateTime showSince = new DateTime();
+			NewsItem[] actual = target.GetNewsFeed( showSince );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
+		}
+
+		/// <summary>
+		///A test for GetNewsFeed
+		///</summary>
+		[TestMethod()]
+		public void GetNewsFeedTest2()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			DateTime showSince = DateTime.Now.Subtract( new TimeSpan( 5, 0, 0, 0, 0 ) );
+			NewsItem[] actual = target.GetNewsFeed( showSince );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
+		}
+
+		/// <summary>
+		///A test for GetNewsFeed
+		///</summary>
+		[TestMethod()]
+		public void GetNewsFeedTest1()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			int maximumItems = 1;
+			NewsItem[] actual = target.GetNewsFeed( maximumItems );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
+		}
+
+		/// <summary>
+		///A test for GetNewsFeed
+		///</summary>
+		[TestMethod()]
+		public void GetNewsFeedTest()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			Nullable<int> maximumItems = 1;
+			Nullable<DateTime> showSince = DateTime.Now.Subtract( new TimeSpan( 5, 0, 0, 0 ) );
+			NewsItem[] actual = target.GetNewsFeed( maximumItems, showSince );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
+		}
+
+		#endregion
 
 
 
