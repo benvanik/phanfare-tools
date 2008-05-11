@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B02E291D-87C7-4C1E-BB78-E9BFDB4577E4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Phanfare.MediaServer</RootNamespace>
+    <AssemblyName>Phanfare.MediaServer</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>Phanfare.MediaServer.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DvConnectionManager.cs" />
+    <Compile Include="DvContentDirectory.cs" />
+    <Compile Include="DvMediaReceiverRegistrar.cs" />
+    <Compile Include="MediaServerDevice.ConnectionManager.cs" />
+    <Compile Include="MediaServerDevice.ContentDirectory.cs" />
+    <Compile Include="MediaServerDevice.cs" />
+    <Compile Include="Service1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Service1.Designer.cs">
+      <DependentUpon>Service1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Phanfare.ExternalAPI\Phanfare.ExternalAPI.csproj">
+      <Project>{79EE5212-E6C6-42BC-BF47-15813C936259}</Project>
+      <Name>Phanfare.ExternalAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="UPnP\UPnP.csproj">
+      <Project>{EFD4E06D-5620-4AB8-B51C-8F19F20DF970}</Project>
+      <Name>UPnP</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Connectors\HandleResult.cs" />
+    <Compile Include="Connectors\PhanfareConnector\ImageCache.cs" />
+    <Compile Include="Connectors\PhanfareConnector\PhanfareGroup.cs" />
+    <Compile Include="Connectors\PhanfareConnector\PhanfareRandomSet.cs" />
+    <Compile Include="ContentHandler.cs" />
+    <Compile Include="Connectors\ContainerBase.cs" />
+    <Compile Include="Connectors\ContentBase.cs" />
+    <Compile Include="Connectors\IContentSystem.cs" />
+    <Compile Include="Connectors\PhanfareConnector\PhanfareAlbum.cs" />
+    <Compile Include="Connectors\PhanfareConnector\PhanfareImage.cs" />
+    <Compile Include="Connectors\PhanfareConnector\PhanfareSection.cs" />
+    <Compile Include="Connectors\PhanfareConnector\PhanfareSystem.cs" />
+    <Compile Include="Connectors\PhanfareConnector\PhanfareUser.cs" />
+    <Compile Include="Didl.cs" />
+    <Compile Include="ProjectInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProjectInstaller.Designer.cs">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\IniReader.cs" />
+    <Compile Include="MediaServerDevice.MediaReceiverRegistrar.cs" />
+    <Compile Include="Utilities\Security.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ProjectInstaller.resx">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icon.png" />
+    <None Include="IconSmall.png" />
+    <None Include="IconLarge.png" />
+    <Content Include="StartService.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StopService.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
