@@ -13,7 +13,7 @@ namespace Phanfare.ExternalAPI
 		public int Height { get; set; }
 		public long FileSize { get; set; }
 		public DateTime CreatedDate { get; set; }
-		public string MediaType { get; set; }
+		public MediaType MediaType { get; set; }
 		public int Quality { get; set; }
 		public string URL { get; set; }
 
@@ -25,7 +25,7 @@ namespace Phanfare.ExternalAPI
 			rendition.Height = el.GetAttributeInt32( "height" );
 			rendition.FileSize = el.GetAttributeInt64( "filesize" );
 			rendition.CreatedDate = el.GetAttributeDate( "created_date" );
-			rendition.MediaType = el.GetAttribute( "media_type" );
+			rendition.MediaType = el.GetAttributeEnum<MediaType>( "media_type" );
 			rendition.Quality = el.GetAttributeInt32( "quality" );
 			rendition.URL = el.GetAttribute( "url" );
 			return rendition;
