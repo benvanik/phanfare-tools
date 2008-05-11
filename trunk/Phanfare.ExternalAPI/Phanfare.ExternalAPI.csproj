@@ -46,7 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Album.cs" />
+    <Compile Include="AlbumComparer.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="GroupInfoComparer.cs" />
+    <Compile Include="MediaType.cs" />
     <Compile Include="NewsItem.cs" />
     <Compile Include="PhanfareException.cs" />
     <Compile Include="Group.cs" />
@@ -60,6 +63,7 @@
     <Compile Include="PhanfareService.Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublicProfile.cs" />
+    <Compile Include="PublicProfileComparer.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Year.cs" />
