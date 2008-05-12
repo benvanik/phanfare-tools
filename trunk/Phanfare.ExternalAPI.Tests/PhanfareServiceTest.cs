@@ -187,6 +187,23 @@ namespace Phanfare.ExternalAPI.Tests
 			Assert.AreNotEqual( actual.Length, 0 );
 		}
 
+		/// <summary>
+		///A test for GetAlbumList
+		///</summary>
+		[TestMethod()]
+		public void GetAlbumListTest5()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			long userId = session.UserID;
+			Album[] actual = target.GetAlbumList( userId, true, new long[] { 1002792, } );
+			Assert.IsNotNull( actual );
+			Assert.AreNotEqual( actual.Length, 0 );
+		}
+
 		#endregion
 
 		#region GetNewsFeed
@@ -258,7 +275,25 @@ namespace Phanfare.ExternalAPI.Tests
 
 		#endregion
 
+		#region GetYearList
 
+		/// <summary>
+		///A test for GetYearList
+		///</summary>
+		[TestMethod()]
+		public void GetYearListTest1()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			long userId = session.UserID;
+			Year[] actual = target.GetYearList( userId );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
+		}
+
+		#endregion
 
 
 
@@ -490,41 +525,6 @@ namespace Phanfare.ExternalAPI.Tests
 			bool isHidden = false;
 			target.HideImage( userId, albumId, sectionId, imageId, isHidden );
 			Assert.Inconclusive( "A method that does not return a value cannot be verified." );
-		}
-
-		/// <summary>
-		///A test for GetYearList
-		///</summary>
-		[TestMethod()]
-		public void GetYearListTest1()
-		{
-			string apiKey = ApiKey;
-			string apiSecret = ApiSecret;
-			PhanfareService target = new PhanfareService( apiKey, apiSecret );
-			long userId = 0;
-			Year[] expected = null;
-			Year[] actual;
-			actual = target.GetYearList( userId );
-			Assert.AreEqual( expected, actual );
-			Assert.Inconclusive( "Verify the correctness of this test method." );
-		}
-
-		/// <summary>
-		///A test for GetYearList
-		///</summary>
-		[TestMethod()]
-		[DeploymentItem( "Phanfare.ExternalAPI.dll" )]
-		public void GetYearListTest()
-		{
-			PrivateObject param0 = null;
-			PhanfareService_Accessor target = new PhanfareService_Accessor( param0 );
-			string parameterName = string.Empty;
-			long value = 0;
-			Year[] expected = null;
-			Year[] actual;
-			actual = target.GetYearList( parameterName, value );
-			Assert.AreEqual( expected, actual );
-			Assert.Inconclusive( "Verify the correctness of this test method." );
 		}
 
 		/// <summary>
@@ -871,8 +871,8 @@ namespace Phanfare.ExternalAPI.Tests
 			string apiSecret = ApiSecret;
 			PhanfareService target = new PhanfareService( apiKey, apiSecret );
 			long groupId = 0;
-			Nullable<DateTime> modifiedAfter = new Nullable<DateTime>();
-			Nullable<int> year = new Nullable<int>();
+			DateTime modifiedAfter = DateTime.MinValue;
+			int year = 0;
 			Album[] expected = null;
 			Album[] actual;
 			actual = target.GetGroupAlbumList( groupId, true, modifiedAfter, year );
@@ -1068,6 +1068,25 @@ namespace Phanfare.ExternalAPI.Tests
 			long albumId = 0;
 			target.DeleteAlbum( userId, albumId );
 			Assert.Inconclusive( "A method that does not return a value cannot be verified." );
+		}
+
+		/// <summary>
+		///A test for GetGroupAlbumList
+		///</summary>
+		[TestMethod()]
+		public void GetGroupAlbumListTest4()
+		{
+			string apiKey = string.Empty; // TODO: Initialize to an appropriate value
+			string apiSecret = string.Empty; // TODO: Initialize to an appropriate value
+			PhanfareService target = new PhanfareService( apiKey, apiSecret ); // TODO: Initialize to an appropriate value
+			long groupId = 0; // TODO: Initialize to an appropriate value
+			bool externalLinks = false; // TODO: Initialize to an appropriate value
+			long[] albumIds = null; // TODO: Initialize to an appropriate value
+			Album[] expected = null; // TODO: Initialize to an appropriate value
+			Album[] actual;
+			actual = target.GetGroupAlbumList( groupId, externalLinks, albumIds );
+			Assert.AreEqual( expected, actual );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
 		}
 	}
 }
