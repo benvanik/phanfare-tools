@@ -7,9 +7,40 @@ using System.Xml;
 namespace Phanfare.ExternalAPI
 {
 	internal delegate T FromXMLDelegate<T>( XmlElement element );
-	
+
 	internal static class Extensions
 	{
+		public static long[] ExtractIDs( this string listing )
+		{
+			string[] idsRaw = listing.Split( new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
+			long[] result = new long[ idsRaw.Length ];
+			for( int n = 0; n < idsRaw.Length; n++ )
+				result[ n ] = long.Parse( idsRaw[ n ] );
+			return result;
+		}
+
+		public static string ToOrderedString<T>( this T[] list )
+		{
+			if( list.Length == 0 )
+				return string.Empty;
+			else if( list.Length == 1 )
+				return list[ 0 ].ToString();
+			else
+			{
+				StringBuilder sb = new StringBuilder( list.Length * 8 );
+				bool first = true;
+				foreach( T item in list )
+				{
+					if( first == false )
+						sb.Append( ',' );
+					else
+						first = false;
+					sb.Append( item );
+				}
+				return sb.ToString();
+			}
+		}
+
 		public static T GetAttributeEnum<T>( this XmlElement element, string attributeName )
 		{
 			string value = element.GetAttribute( attributeName );

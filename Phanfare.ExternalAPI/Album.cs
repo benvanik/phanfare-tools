@@ -62,7 +62,7 @@ namespace Phanfare.ExternalAPI
 
 		public bool IsSharedWith( long groupId )
 		{
-			return this.Groups.Any<Group>( ( group ) => ( group.GroupID == groupId ) );
+			return this.Groups.Any( ( group ) => ( group.GroupID == groupId ) );
 		}
 	}
 }

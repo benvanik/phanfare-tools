@@ -10,6 +10,7 @@ namespace Phanfare.ExternalAPI
 	{
 		public int YearOrdinal { get; set; }
 		public int ChildCount { get; set; }
+		public long[] AlbumIDs { get; set; }
 
 		public bool IsTimeless { get { return YearOrdinal == 9999; } }
 
@@ -18,6 +19,7 @@ namespace Phanfare.ExternalAPI
 			Year year = new Year();
 			year.YearOrdinal = el.GetAttributeInt32( "year" );
 			year.ChildCount = el.GetAttributeInt32( "child_count" );
+			year.AlbumIDs = el.GetAttribute( "album_ids" ).ExtractIDs();
 			return year;
 		}
 	}
