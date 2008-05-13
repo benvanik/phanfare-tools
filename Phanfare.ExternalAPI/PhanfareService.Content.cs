@@ -220,10 +220,15 @@ namespace Phanfare.ExternalAPI
 
 		public ImageInfo[] GetSectionImages( long userId, long albumId, long sectionId )
 		{
-			return this.GetSectionImages( userId, albumId, sectionId, false );
+			return this.GetSectionImages( userId, albumId, sectionId, false, null, null );
 		}
 
 		public ImageInfo[] GetSectionImages( long userId, long albumId, long sectionId, bool externalLinks )
+		{
+			return this.GetSectionImages( userId, albumId, sectionId, externalLinks, null, null );
+		}
+
+		public ImageInfo[] GetSectionImages( long userId, long albumId, long sectionId, bool externalLinks, int? startIndex, int? itemCount )
 		{
 			this.AssertSessionValid();
 			this.AssertParameterValidID( "userId", userId );
@@ -235,6 +240,10 @@ namespace Phanfare.ExternalAPI
 			ht[ "album_id" ] = albumId;
 			ht[ "section_id" ] = sectionId;
 			ht[ "external_links" ] = externalLinks;
+			if( startIndex != null )
+				ht[ "start_index" ] = startIndex.Value;
+			if( itemCount != null )
+				ht[ "items_requested" ] = itemCount.Value;
 
 			XmlDocument doc = this.MakeRequest( ht );
 			return this.ReadResponseList<ImageInfo>( doc, "images", "num_images", ImageInfo.FromXML );

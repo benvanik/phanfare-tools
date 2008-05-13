@@ -295,7 +295,76 @@ namespace Phanfare.ExternalAPI.Tests
 
 		#endregion
 
+		#region GetSectionImages
 
+		/// <summary>
+		///A test for GetSectionImages
+		///</summary>
+		[TestMethod()]
+		public void GetSectionImagesTest1()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			long userId = session.UserID;
+			long albumId = 0;
+			long sectionId = 0;
+			bool externalLinks = false;
+			ImageInfo[] expected = null;
+			ImageInfo[] actual;
+			actual = target.GetSectionImages( userId, albumId, sectionId, externalLinks );
+			Assert.AreEqual( expected, actual );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
+		}
+
+		/// <summary>
+		///A test for GetSectionImages
+		///</summary>
+		[TestMethod()]
+		public void GetSectionImagesTest2()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			long userId = session.UserID;
+			long albumId = 0;
+			long sectionId = 0;
+			ImageInfo[] expected = null;
+			ImageInfo[] actual;
+			actual = target.GetSectionImages( userId, albumId, sectionId );
+			Assert.AreEqual( expected, actual );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
+		}
+
+		/// <summary>
+		///A test for GetSectionImages
+		///</summary>
+		[TestMethod()]
+		public void GetSectionImagesTest3()
+		{
+			string apiKey = ApiKey;
+			string apiSecret = ApiSecret;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			Session session = target.Authenticate( EmailAddress, Password );
+
+			long userId = session.UserID;
+			long albumId = 1003210;
+			long sectionId = 1003353;
+			bool externalLinks = false;
+			Nullable<int> startIndex = 15;
+			Nullable<int> itemCount = 25;
+			ImageInfo[] expected = null;
+			ImageInfo[] actual;
+			actual = target.GetSectionImages( userId, albumId, sectionId, externalLinks, startIndex, itemCount );
+			Assert.AreEqual( expected, actual );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
+		}
+
+		#endregion
 
 
 
@@ -525,45 +594,6 @@ namespace Phanfare.ExternalAPI.Tests
 			bool isHidden = false;
 			target.HideImage( userId, albumId, sectionId, imageId, isHidden );
 			Assert.Inconclusive( "A method that does not return a value cannot be verified." );
-		}
-
-		/// <summary>
-		///A test for GetSectionImages
-		///</summary>
-		[TestMethod()]
-		public void GetSectionImagesTest1()
-		{
-			string apiKey = ApiKey;
-			string apiSecret = ApiSecret;
-			PhanfareService target = new PhanfareService( apiKey, apiSecret );
-			long userId = 0;
-			long albumId = 0;
-			long sectionId = 0;
-			bool externalLinks = false;
-			ImageInfo[] expected = null;
-			ImageInfo[] actual;
-			actual = target.GetSectionImages( userId, albumId, sectionId, externalLinks );
-			Assert.AreEqual( expected, actual );
-			Assert.Inconclusive( "Verify the correctness of this test method." );
-		}
-
-		/// <summary>
-		///A test for GetSectionImages
-		///</summary>
-		[TestMethod()]
-		public void GetSectionImagesTest()
-		{
-			string apiKey = ApiKey;
-			string apiSecret = ApiSecret;
-			PhanfareService target = new PhanfareService( apiKey, apiSecret );
-			long userId = 0;
-			long albumId = 0;
-			long sectionId = 0;
-			ImageInfo[] expected = null;
-			ImageInfo[] actual;
-			actual = target.GetSectionImages( userId, albumId, sectionId );
-			Assert.AreEqual( expected, actual );
-			Assert.Inconclusive( "Verify the correctness of this test method." );
 		}
 
 		/// <summary>
@@ -1076,15 +1106,37 @@ namespace Phanfare.ExternalAPI.Tests
 		[TestMethod()]
 		public void GetGroupAlbumListTest4()
 		{
+			string apiKey = string.Empty;
+			string apiSecret = string.Empty;
+			PhanfareService target = new PhanfareService( apiKey, apiSecret );
+			long groupId = 0;
+			bool externalLinks = false;
+			long[] albumIds = null;
+			Album[] expected = null;
+			Album[] actual;
+			actual = target.GetGroupAlbumList( groupId, externalLinks, albumIds );
+			Assert.AreEqual( expected, actual );
+			Assert.Inconclusive( "Verify the correctness of this test method." );
+		}
+
+		/// <summary>
+		///A test for GetSectionImages
+		///</summary>
+		[TestMethod()]
+		public void GetSectionImagesTest()
+		{
 			string apiKey = string.Empty; // TODO: Initialize to an appropriate value
 			string apiSecret = string.Empty; // TODO: Initialize to an appropriate value
 			PhanfareService target = new PhanfareService( apiKey, apiSecret ); // TODO: Initialize to an appropriate value
-			long groupId = 0; // TODO: Initialize to an appropriate value
+			long userId = 0; // TODO: Initialize to an appropriate value
+			long albumId = 0; // TODO: Initialize to an appropriate value
+			long sectionId = 0; // TODO: Initialize to an appropriate value
 			bool externalLinks = false; // TODO: Initialize to an appropriate value
-			long[] albumIds = null; // TODO: Initialize to an appropriate value
-			Album[] expected = null; // TODO: Initialize to an appropriate value
-			Album[] actual;
-			actual = target.GetGroupAlbumList( groupId, externalLinks, albumIds );
+			Nullable<int> startIndex = new Nullable<int>(); // TODO: Initialize to an appropriate value
+			Nullable<int> itemCount = new Nullable<int>(); // TODO: Initialize to an appropriate value
+			ImageInfo[] expected = null; // TODO: Initialize to an appropriate value
+			ImageInfo[] actual;
+			actual = target.GetSectionImages( userId, albumId, sectionId, externalLinks, startIndex, itemCount );
 			Assert.AreEqual( expected, actual );
 			Assert.Inconclusive( "Verify the correctness of this test method." );
 		}
