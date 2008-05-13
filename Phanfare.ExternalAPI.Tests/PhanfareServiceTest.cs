@@ -355,7 +355,7 @@ namespace Phanfare.ExternalAPI.Tests
 			long albumId = 1003210;
 			long sectionId = 1003353;
 			bool externalLinks = false;
-			Nullable<int> startIndex = 15;
+			Nullable<int> startIndex = 1;
 			Nullable<int> itemCount = 25;
 			ImageInfo[] expected = null;
 			ImageInfo[] actual;

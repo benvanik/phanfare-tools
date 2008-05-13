@@ -12,12 +12,11 @@ namespace Phanfare.ExternalAPI
 		private string _apiKey;
 		private string _apiSecret;
 		private bool _useHttps;
-		private string _sessionCookie;
 		private bool _asJson;
 
 		private const string BaseUrl = "www.phanfare.com/api/?";
 
-		public string SessionCookie { get { return _sessionCookie; } }
+		public string SessionCookie { get; set; }
 
 		public PhanfareService( string apiKey, string apiSecret )
 			: this( apiKey, apiSecret, false, false )
@@ -33,7 +32,7 @@ namespace Phanfare.ExternalAPI
 			_apiSecret = apiSecret;
 			_useHttps = useHttps;
 			_asJson = asJson;
-			_sessionCookie = string.Empty;
+			this.SessionCookie = string.Empty;
 		}
 
 		public Session Authenticate( string emailAddress, string password )
@@ -47,7 +46,8 @@ namespace Phanfare.ExternalAPI
 
 			XmlDocument doc = this.MakeRequest( ht, true );
 			Session s = Session.FromXML( ( XmlElement )doc.ChildNodes[ 1 ].FirstChild );
-			_sessionCookie = s.SessionCookie;
+			if( s != null )
+				this.SessionCookie = s.SessionCookie;
 			return s;
 		}
 
