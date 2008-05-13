@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 import org.json.me.JSONArray;
 import org.json.me.JSONException;
@@ -340,14 +341,28 @@ public class PhanfareService {
 			e1.printStackTrace();
 			return null;
 		}
+		// Code to use fiddler:
+		// java.net.ProxySelector.setDefault(new ProxySelector() {
+		// public void connectFailed(URI uri, SocketAddress sa, IOException ioe)
+		// {
+		// }
+		// public List select(URI uri) {
+		// ArrayList l = new ArrayList();
+		// Proxy proxy = new Proxy(Proxy.Type.HTTP, new
+		// InetSocketAddress("localhost", 8888));
+		// l.add(proxy);
+		// return l;
+		// }
+		// });
 		c.setConnectTimeout(60 * 1000);
 		c.setReadTimeout(60 * 1000);
 		c.setUseCaches(false);
 		c.addRequestProperty("User-Agent", "PhanfareJavaAPI");
 		c.addRequestProperty("cookie", "phanfare2=" + this.sessionCookie + "; ");
+		c.addRequestProperty("Accept-Encoding", "gzip");
 		BufferedReader stream;
 		try {
-			stream = new BufferedReader(new InputStreamReader(c.getInputStream()));
+			stream = new BufferedReader(new InputStreamReader(new GZIPInputStream(c.getInputStream())));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
