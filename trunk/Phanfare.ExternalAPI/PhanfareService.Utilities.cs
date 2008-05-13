@@ -25,7 +25,7 @@ namespace Phanfare.ExternalAPI
 
 		private void AssertSessionValid()
 		{
-			if( _sessionCookie == null )
+			if( this.SessionCookie == null )
 				throw new PhanfareException( "Not logged in!" );
 		}
 
@@ -54,7 +54,7 @@ namespace Phanfare.ExternalAPI
 			Cookie cookie = new Cookie();
 			cookie.Domain = ".phanfare.com";
 			cookie.Name = "phanfare2";
-			cookie.Value = _sessionCookie;
+			cookie.Value = this.SessionCookie;
 			cookie.Expires = DateTime.Now.AddDays( 1 );
 			return cookie;
 		}
@@ -156,19 +156,19 @@ namespace Phanfare.ExternalAPI
 			XmlDocument doc = new XmlDocument();
 			doc.Load( new StringReader( rawResponse ) );
 
-			XmlNodeList rspCode = doc.GetElementsByTagName( "rsp" );
+			XmlNode rspCode = doc.LastChild;
 
-			if( rspCode.Count == 0 )
+			if( ( doc.LastChild == doc.FirstChild ) || ( rspCode == null ) )
 				throw new PhanfareException( "Invalid response from the Phanfare Service" );
-			if( rspCode[ 0 ].Attributes[ "stat" ].Value == "fail" )
+			if( rspCode.Attributes[ "stat" ].Value == "fail" )
 			{
-				string errorCodeString = rspCode[ 0 ].Attributes[ "error_code" ].Value;
+				string errorCodeString = rspCode.Attributes[ "error_code" ].Value;
 				int errorCode = -1;
 				if( errorCodeString != string.Empty )
 					errorCode = int.Parse( errorCodeString );
 
-				string codeValue = rspCode[ 0 ].Attributes[ "code_value" ].Value;
-				string message = rspCode[ 0 ].Attributes[ "msg" ].Value;
+				string codeValue = rspCode.Attributes[ "code_value" ].Value;
+				string message = rspCode.Attributes[ "msg" ].Value;
 
 				throw new PhanfareException( errorCode, codeValue, message );
 			}
