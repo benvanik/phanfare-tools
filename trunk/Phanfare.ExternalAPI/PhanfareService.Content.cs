@@ -380,8 +380,7 @@ namespace Phanfare.ExternalAPI
 			this.AssertParameterValidID( "albumId", albumId );
 			this.AssertParameterValidID( "sectionId", sectionId );
 
-			Hashtable ht = new Hashtable( 4 );
-			ht[ "method" ] = "deletesection";
+			Hashtable ht = this.MethodCall( "deletesection" );
 			ht[ "target_uid" ] = userId;
 			ht[ "album_id" ] = albumId;
 			ht[ "section_id" ] = sectionId;
