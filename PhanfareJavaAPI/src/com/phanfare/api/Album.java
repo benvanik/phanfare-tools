@@ -18,7 +18,7 @@ public class Album {
 	public Date endDate;
 	public Date creationDate;
 	public Date lastModified;
-	public boolean autoDate;
+	public Boolean autoDate;
 	public String url;
 	public long ownerId;
 
@@ -41,7 +41,7 @@ public class Album {
 			album.endDate = Utilities.convertJsonDate(object.getString("album_end_date"));
 			album.creationDate = Utilities.convertJsonDate(object.getString("album_creation_date"));
 			album.lastModified = Utilities.convertJsonDate(object.getString("album_last_modified"));
-			album.autoDate = object.getBoolean("auto_date");
+			album.autoDate = new Boolean( object.getBoolean("auto_date") );
 			album.url = object.getString("album_url");
 			album.ownerId = object.getLong("owner_uid");
 

@@ -87,6 +87,115 @@ public class PhanfareService {
 		}
 	}
 
+	public NewsItem[] getNewsFeed() throws PhanfareException {
+		return this.getNewsFeed(null, null);
+	}
+
+	public NewsItem[] getNewsFeed(int maximumItems) throws PhanfareException {
+		return this.getNewsFeed(new Integer(maximumItems), null);
+	}
+
+	public NewsItem[] getNewsFeed(Date showSince) throws PhanfareException {
+		return this.getNewsFeed(null, showSince);
+	}
+
+	public NewsItem[] getNewsFeed(Integer maximumItems, Date showSince) throws PhanfareException {
+		this.assertSessionValid();
+		Map ht = methodCall("getnewsfeed");
+		if (maximumItems != null)
+			ht.put("maximum_item_count", maximumItems);
+		if (showSince != null)
+			ht.put("show_since", showSince);
+		String responseString = this.makeRequest(ht);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			JSONArray array = object.getJSONArray("newsfeed");
+			NewsItem[] newsItems = new NewsItem[array.length()];
+			for (int n = 0; n < newsItems.length; n++) {
+				newsItems[n] = NewsItem.fromJson(array.getJSONObject(n));
+			}
+			return newsItems;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public GroupInfo[] getMyGroups() throws PhanfareException {
+		this.assertSessionValid();
+		Map ht = methodCall("getmygroups");
+		String responseString = this.makeRequest(ht);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			JSONArray array = object.getJSONArray("groupinfos");
+			GroupInfo[] groupInfos = new GroupInfo[array.length()];
+			for (int n = 0; n < groupInfos.length; n++) {
+				groupInfos[n] = GroupInfo.fromJson(array.getJSONObject(n));
+			}
+			return groupInfos;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public PublicProfile[] getMyRelationships() throws PhanfareException {
+		return this.getMyRelationships(false);
+	}
+
+	public PublicProfile[] getMyRelationships(boolean externalLinks) throws PhanfareException {
+		this.assertSessionValid();
+		return this.getRelationships(false, 0, externalLinks);
+	}
+
+	public PublicProfile[] getGroupRelationships(long groupId) throws PhanfareException {
+		return this.getGroupRelationships(groupId, false);
+	}
+
+	public PublicProfile[] getGroupRelationships(long groupId, boolean externalLinks) throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("groupId", groupId);
+		return this.getRelationships(true, groupId, externalLinks);
+	}
+
+	private PublicProfile[] getRelationships(boolean forGroup, long groupId, boolean externalLinks)
+			throws PhanfareException {
+		this.assertSessionValid();
+
+		Map ht;
+		if (forGroup == true) {
+			ht = methodCall("getgrouprelations");
+			ht.put("group_id", new Long(groupId));
+		} else {
+			ht = methodCall("getmyrelations");
+		}
+		if (externalLinks == true)
+			ht.put("external_links", new Boolean(externalLinks));
+
+		String responseString = this.makeRequest(ht);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			JSONArray array = object.getJSONArray("profiles");
+			PublicProfile[] profiles = new PublicProfile[array.length()];
+			for (int n = 0; n < profiles.length; n++) {
+				profiles[n] = PublicProfile.fromJson(array.getJSONObject(n));
+			}
+			return profiles;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public Year[] getYearList(long userId) throws PhanfareException {
 		this.assertSessionValid();
 		this.assertParameterValidId("userId", userId);
@@ -223,7 +332,6 @@ public class PhanfareService {
 		this.assertSessionValid();
 		this.assertParameterValidId("userId", userId);
 		this.assertParameterValidId("albumId", albumId);
-
 		Map ht = methodCall("getalbum");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
@@ -233,6 +341,59 @@ public class PhanfareService {
 		try {
 			JSONObject object = this.parseResponse(responseString);
 			return Album.fromJson(object);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Album getMobileAlbum(long userId, boolean useExisting) throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		Map ht = methodCall("getalbum");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(1));
+		ht.put("mobile", new Boolean(true));
+		ht.put("use_existing_mobile", new Boolean(useExisting));
+		String responseString = this.makeRequest(ht);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			return Album.fromJson(object);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public ImageInfo[] getAlbumImages(long userId, long albumId) throws PhanfareException {
+		return this.getAlbumImages(userId, albumId, false);
+	}
+
+	public ImageInfo[] getAlbumImages(long userId, long albumId, boolean externalLinks) throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		Map ht = methodCall("getimages");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("image_mode", "specificalbum");
+		if (externalLinks == true)
+			ht.put("external_links", new Boolean(externalLinks));
+		String responseString = this.makeRequest(ht);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			JSONArray array = object.getJSONArray("images");
+			ImageInfo[] images = new ImageInfo[array.length()];
+			for (int n = 0; n < images.length; n++) {
+				images[n] = ImageInfo.fromJson(array.getJSONObject(n));
+			}
+			return images;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -261,7 +422,6 @@ public class PhanfareService {
 		this.assertParameterValidId("userId", userId);
 		this.assertParameterValidId("albumId", albumId);
 		this.assertParameterValidId("sectionId", sectionId);
-
 		Map ht = methodCall("getsectionimages");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
@@ -288,6 +448,314 @@ public class PhanfareService {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public ImageInfo getImageInfo(long userId, long albumId, long sectionId, long imageId) throws PhanfareException {
+		return this.getImageInfo(userId, albumId, sectionId, imageId, false);
+	}
+
+	public ImageInfo getImageInfo(long userId, long albumId, long sectionId, long imageId, boolean externalLinks)
+			throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterValidId("sectionId", sectionId);
+		this.assertParameterValidId("imageId", imageId);
+		Map ht = methodCall("getimageinfo");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("section_id", new Long(sectionId));
+		ht.put("image_id", new Long(imageId));
+		ht.put("external_links", new Boolean(externalLinks));
+		String responseString = this.makeRequest(ht);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			return ImageInfo.fromJson(object);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public final static int RANDOM_MODE_RANDOM = 0;
+	public final static int RANDOM_MODE_NEWEST_ALBUM_CREATION_DATE = 1;
+	public final static int RANDOM_MODE_NEWEST_ALBUM_START_DATE = 2;
+	public final static int RANDOM_MODE_NEWEST_IMAGES = 3;
+
+	public ImageInfo[] getRandomImages(long userId, int mode, int imageCount) throws PhanfareException {
+		return this.getRandomImages(userId, mode, imageCount, false);
+	}
+
+	public ImageInfo[] getRandomImages(long userId, int mode, int imageCount, boolean externalLinks)
+			throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		return this.getRandomImages("target_uid", userId, mode, imageCount, externalLinks);
+	}
+
+	public ImageInfo[] getGroupRandomImages(long groupId, int mode, int imageCount) throws PhanfareException {
+		return this.getGroupRandomImages(groupId, mode, imageCount, false);
+	}
+
+	public ImageInfo[] getGroupRandomImages(long groupId, int mode, int imageCount, boolean externalLinks)
+			throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("groupId", groupId);
+		return this.getRandomImages("group_id", groupId, mode, imageCount, externalLinks);
+	}
+
+	private ImageInfo[] getRandomImages(String parameterName, long value, int mode, int imageCount,
+			boolean externalLinks) throws PhanfareException {
+		Map ht = methodCall("getimages");
+		ht.put(parameterName, new Long(value));
+		switch (mode) {
+		default:
+		case RANDOM_MODE_RANDOM:
+			ht.put("image_mode", "Random");
+			break;
+		case RANDOM_MODE_NEWEST_ALBUM_CREATION_DATE:
+			ht.put("image_mode", "NewestAlbumCreationDate");
+			break;
+		case RANDOM_MODE_NEWEST_ALBUM_START_DATE:
+			ht.put("image_mode", "NewestAlbumStartDate");
+			break;
+		case RANDOM_MODE_NEWEST_IMAGES:
+			ht.put("image_mode", "NewestImages");
+			break;
+		}
+		ht.put("num_images", new Integer(imageCount));
+		if (externalLinks == true)
+			ht.put("external_links", new Boolean(externalLinks));
+		String responseString = this.makeRequest(ht);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			JSONArray array = object.getJSONArray("images");
+			ImageInfo[] images = new ImageInfo[array.length()];
+			for (int n = 0; n < images.length; n++) {
+				images[n] = ImageInfo.fromJson(array.getJSONObject(n));
+			}
+			return images;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Album NewAlbum(long userId, Album album) throws PhanfareException {
+		return this.newAlbum(userId, album, new long[0]);
+	}
+
+	public Album newAlbum(long userId, Album album, long[] groups) throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterNotNull("album", album);
+		this.assertParameterNotNull("groups", groups);
+		Map ht = methodCall("newalbum");
+		ht.put("target_uid", new Long(userId));
+		if ((album.name != null) && (album.name.length() > 0))
+			ht.put("album_name", album.name);
+		if ((album.description != null) && (album.description.length() > 0))
+			ht.put("album_description", album.description);
+		if (album.startDate != null)
+			ht.put("album_start_date", album.startDate);
+		if (album.endDate != null)
+			ht.put("album_end_date", album.endDate);
+		if (album.autoDate != null)
+			ht.put("auto_date", album.autoDate);
+		switch (album.type) {
+		default:
+		case Album.ALBUM_TYPE_DATED:
+			ht.put("type", "Dated");
+			break;
+		case Album.ALBUM_TYPE_TIMELESS:
+			ht.put("type", "Timeless");
+			break;
+		}
+		if (groups.length > 0)
+			ht.put("groups", Utilities.joinIds(groups));
+		String responseString = this.makeRequest(ht);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			return Album.fromJson(object);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Section newSection(long userId, long albumId, Section section) throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterNotNull("section", section);
+		Map ht = methodCall("newsection");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		if ((section.name != null) && (section.name.length() > 0))
+			ht.put("section_name", section.name);
+		if ((section.description != null) && (section.description.length() > 0))
+			ht.put("section_description", section.description);
+		String responseString = this.makeRequest(ht);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			return Section.fromJson(object);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void deleteAlbum(long userId, long albumId) throws PhanfareException {
+		this.deleteAlbum(userId, albumId, false);
+	}
+
+	public void deleteAlbum(long userId, long albumId, boolean deleteForever) throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		Map ht = methodCall("deletealbum");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("to_trash", new Boolean(!deleteForever));
+		this.makeRequest(ht);
+	}
+
+	public void deleteSection(long userId, long albumId, long sectionId) throws PhanfareException {
+		this.deleteSection(userId, albumId, sectionId, false);
+	}
+
+	public void deleteSection(long userId, long albumId, long sectionId, boolean deleteForever)
+			throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterValidId("sectionId", sectionId);
+		Map ht = methodCall("deletesection");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("section_id", new Long(sectionId));
+		ht.put("to_trash", new Boolean(!deleteForever));
+		this.makeRequest(ht);
+	}
+
+	public void deleteImage(long userId, long albumId, long sectionId, long imageId) throws PhanfareException {
+		this.deleteImage(userId, albumId, sectionId, imageId, false);
+	}
+
+	public void deleteImage(long userId, long albumId, long sectionId, long imageId, boolean deleteForever)
+			throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterValidId("sectionId", sectionId);
+		this.assertParameterValidId("imageId", imageId);
+		Map ht = methodCall("deleteimage");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("section_id", new Long(sectionId));
+		ht.put("image_id", new Long(imageId));
+		ht.put("to_trash", new Boolean(!deleteForever));
+		this.makeRequest(ht);
+	}
+
+	public void updateAlbum(long userId, long albumId, String fieldToUpdate, Object fieldValue)
+			throws PhanfareException {
+		// album_name, album_description, album_start_date, album_end_date,
+		// album_type, groups
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterNotNullOrEmpty("fieldToUpdate", fieldToUpdate);
+		this.assertParameterNotNull("fieldValue", fieldValue);
+		Map ht = methodCall("updatealbum");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("field_to_update", fieldToUpdate);
+		ht.put("field_value", fieldValue);
+		this.makeRequest(ht);
+	}
+
+	public void updateSection(long userId, long albumId, long sectionId, String fieldToUpdate, Object fieldValue)
+			throws PhanfareException {
+		// section_name, section_description
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterValidId("sectionId", sectionId);
+		this.assertParameterNotNullOrEmpty("fieldToUpdate", fieldToUpdate);
+		this.assertParameterNotNull("fieldValue", fieldValue);
+		Map ht = methodCall("updatesection");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("section_id", new Long(sectionId));
+		ht.put("field_to_update", fieldToUpdate);
+		ht.put("field_value", fieldValue);
+		this.makeRequest(ht);
+	}
+
+	public void updateImage(long userId, long albumId, long sectionId, long imageId, String fieldToUpdate,
+			Object fieldValue) throws PhanfareException {
+		// caption, image_date, hide
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterValidId("sectionId", sectionId);
+		this.assertParameterValidId("imageId", imageId);
+		this.assertParameterNotNullOrEmpty("fieldToUpdate", fieldToUpdate);
+		this.assertParameterNotNull("fieldValue", fieldValue);
+		Map ht = methodCall("updateimage");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("section_id", new Long(sectionId));
+		ht.put("image_id", new Long(imageId));
+		ht.put("field_to_update", fieldToUpdate);
+		ht.put("field_value", fieldValue);
+		this.makeRequest(ht);
+	}
+
+	public void updateImageCaption(long userId, long albumId, long sectionId, long imageId, String caption)
+			throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterValidId("sectionId", sectionId);
+		this.assertParameterValidId("imageId", imageId);
+		this.assertParameterNotNull("caption", caption);
+		Map ht = methodCall("updatecaption");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("section_id", new Long(sectionId));
+		ht.put("image_id", new Long(imageId));
+		ht.put("caption", caption);
+		this.makeRequest(ht);
+	}
+
+	public void hideImage(long userId, long albumId, long sectionId, long imageId, boolean isHidden)
+			throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterValidId("sectionId", sectionId);
+		this.assertParameterValidId("imageId", imageId);
+		Map ht = methodCall("hideimage");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("section_id", new Long(sectionId));
+		ht.put("image_id", new Long(imageId));
+		ht.put("hidden", new Boolean(isHidden));
+		this.makeRequest(ht);
 	}
 
 	private void assertSessionValid() {
