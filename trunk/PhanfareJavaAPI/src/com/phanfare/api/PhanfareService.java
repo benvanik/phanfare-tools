@@ -1,9 +1,16 @@
 package com.phanfare.api;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -48,7 +55,7 @@ public class PhanfareService {
 		Map ht = methodCall("authenticate");
 		ht.put("email_address", emailAddress);
 		ht.put("password", password);
-		String responseString = this.makeRequest(ht);
+		String responseString = this.makeRequest(ht, true);
 		if (responseString == null)
 			return null;
 		try {
@@ -758,6 +765,161 @@ public class PhanfareService {
 		this.makeRequest(ht);
 	}
 
+	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, String sourceFileName)
+			throws PhanfareException {
+		return this.newImage(userId, albumId, sectionId, image, sourceFileName, false, false);
+	}
+
+	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, String sourceFileName,
+			boolean externalLinks) throws PhanfareException {
+		return this.newImage(userId, albumId, sectionId, image, sourceFileName, externalLinks, false);
+	}
+
+	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, String sourceFileName,
+			boolean externalLinks, boolean setAsProfilePicture) throws PhanfareException {
+		this.assertParameterNotNullOrEmpty("sourceFileName", sourceFileName);
+		File file = new File(sourceFileName);
+		if (file.exists() == false)
+			throw new PhanfareException(sourceFileName + " is not a valid filename");
+		if (file.canRead() == false)
+			throw new PhanfareException(sourceFileName + " is not readable");
+		long length = file.length();
+		if (length == 0)
+			throw new PhanfareException(sourceFileName + " has a length of 0");
+		image.fileName = sourceFileName;
+		FileInputStream sourceStream = null;
+		try {
+			sourceStream = new FileInputStream(file);
+			return this.newImage(userId, albumId, sectionId, image, sourceStream, length, externalLinks,
+					setAsProfilePicture);
+		} catch (FileNotFoundException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+			return null;
+		} finally {
+			if (sourceStream != null) {
+				try {
+					sourceStream.close();
+				} catch (IOException ex) {
+				}
+			}
+		}
+	}
+
+	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, InputStream sourceStream,
+			long length) throws PhanfareException {
+		return this.newImage(userId, albumId, sectionId, image, sourceStream, length, false, false);
+	}
+
+	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, InputStream sourceStream,
+			long length, boolean externalLinks) throws PhanfareException {
+		return this.newImage(userId, albumId, sectionId, image, sourceStream, length, externalLinks, false);
+	}
+
+	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, InputStream sourceStream,
+			long length, boolean externalLinks, boolean setAsProfilePicture) throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterValidId("userId", userId);
+		this.assertParameterValidId("albumId", albumId);
+		this.assertParameterValidId("sectionId", sectionId);
+		this.assertParameterNotNull("image", image);
+		this.assertParameterNotNullOrEmpty("image.fileName", image.fileName);
+		this.assertParameterNotNull("sourceStream", sourceStream);
+
+		Map ht = methodCall("newimage");
+		ht.put("target_uid", new Long(userId));
+		ht.put("album_id", new Long(albumId));
+		ht.put("section_id", new Long(sectionId));
+		ht.put("filename", image.fileName);
+		if (image.caption != null)
+			ht.put("caption", image.caption);
+		if (image.imageDate != null)
+			ht.put("image_date", image.imageDate);
+		ht.put("is_video", new Boolean(image.isVideo));
+		ht.put("hidden", new Boolean(image.isHidden));
+		ht.put("set_as_profile", new Boolean(setAsProfilePicture));
+		if (externalLinks == true)
+			ht.put("external_links", new Boolean(externalLinks));
+		String responseString = this.makeRequest(ht, sourceStream, length);
+		if (responseString == null)
+			return null;
+		try {
+			JSONObject object = this.parseResponse(responseString);
+			return ImageInfo.fromJson(object);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public byte[] getImageData(ImageRendition rendition) throws PhanfareException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream((int) rendition.fileSize);
+		if (this.getImageData(rendition, outputStream) < 0)
+			return null;
+		else
+			return outputStream.toByteArray();
+	}
+
+	public long getImageData(ImageRendition rendition, OutputStream outputStream) throws PhanfareException {
+		this.assertSessionValid();
+		this.assertParameterNotNull("rendition", rendition);
+
+		URL url;
+		try {
+			url = new URL(rendition.url);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return -1;
+		}
+		URLConnection c;
+		try {
+			c = url.openConnection();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return -1;
+		}
+		c.setConnectTimeout(60 * 1000);
+		c.setReadTimeout(60 * 1000);
+		c.setUseCaches(true);
+		c.addRequestProperty("User-Agent", "PhanfareJavaAPI");
+		c.addRequestProperty("cookie", "phanfare2=" + this.sessionCookie + "; ");
+		c.addRequestProperty("Accept-Encoding", "gzip");
+		BufferedInputStream stream;
+		try {
+			stream = new BufferedInputStream(new GZIPInputStream(c.getInputStream()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+		long totalBytes = 0;
+		byte[] buffer = new byte[64 * 1024];
+		try {
+			int read = 0;
+			do {
+				read = stream.read(buffer);
+				if (read == -1)
+					break;
+				totalBytes += read;
+				outputStream.write(buffer, 0, read);
+			} while (read > 0);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+		try {
+			stream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return totalBytes;
+	}
+
 	private void assertSessionValid() {
 		if ((this.sessionCookie == null) || (this.sessionCookie.isEmpty() == true)) {
 			// TODO
@@ -789,10 +951,18 @@ public class PhanfareService {
 	}
 
 	private String makeRequest(Map parameters) {
-		return this.makeRequest(parameters, _useHttps);
+		return this.makeRequest(parameters, _useHttps, null, 0);
 	}
 
 	private String makeRequest(Map parameters, boolean secure) {
+		return this.makeRequest(parameters, secure, null, 0);
+	}
+
+	private String makeRequest(Map parameters, InputStream sourceStream, long length) {
+		return this.makeRequest(parameters, _useHttps, sourceStream, length);
+	}
+
+	private String makeRequest(Map parameters, boolean secure, InputStream sourceStream, long length) {
 		URL url;
 		try {
 			url = new URL(makeUrl(parameters, secure));
@@ -828,38 +998,56 @@ public class PhanfareService {
 		c.addRequestProperty("User-Agent", "PhanfareJavaAPI");
 		c.addRequestProperty("cookie", "phanfare2=" + this.sessionCookie + "; ");
 		c.addRequestProperty("Accept-Encoding", "gzip");
-		BufferedReader stream;
-		try {
-			stream = new BufferedReader(new InputStreamReader(new GZIPInputStream(c.getInputStream())));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+		if (sourceStream != null) {
+			c.setRequestProperty("Content-Type", "multipart/form-data");
+			c.setRequestProperty("Content-Length", String.valueOf(length));
+			// request.Method = "POST";
+			try {
+				BufferedInputStream input = new BufferedInputStream(sourceStream);
+				BufferedOutputStream output = new BufferedOutputStream(c.getOutputStream());
+				int read = 0;
+				byte[] buffer = new byte[64 * 1024];
+				do {
+					read = input.read(buffer);
+					if (read < 0)
+						break;
+					output.write(buffer, 0, read);
+				} while (read >= 0);
+			} catch (IOException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+				return null;
+			}
 		}
+		BufferedReader stream = null;
 		StringBuilder sb = new StringBuilder();
 		try {
-			while (true) {
-				String line = stream.readLine();
-				if (line == null)
-					break;
-				sb.append(line);
+			try {
+				stream = new BufferedReader(new InputStreamReader(new GZIPInputStream(c.getInputStream())));
+			} catch (IOException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+				return null;
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		try {
-			stream.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+				while (true) {
+					String line = stream.readLine();
+					if (line == null)
+						break;
+					sb.append(line);
+				}
+			} catch (IOException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+				return null;
+			}
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException ex) {
+			}
 		}
 		return sb.toString();
-	}
-
-	private String makeRequest(Map parameters, InputStream sourceStream, long length) {
-		return null;
 	}
 
 	private JSONObject parseResponse(String rawResponse) throws JSONException, PhanfareException {
