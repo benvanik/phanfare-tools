@@ -519,7 +519,7 @@ namespace Phanfare.ExternalAPI.Tests
 			bool externalLinks = false;
 			ImageInfo expected = null;
 			ImageInfo actual;
-			actual = target.NewImage( userId, albumId, sectionId, image, setAsProfilePicture, externalLinks );
+			actual = target.NewImage( userId, albumId, sectionId, image, externalLinks, setAsProfilePicture );
 			Assert.AreEqual( expected, actual );
 			Assert.Inconclusive( "Verify the correctness of this test method." );
 		}

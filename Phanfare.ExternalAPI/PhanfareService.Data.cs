@@ -18,10 +18,10 @@ namespace Phanfare.ExternalAPI
 
 		public ImageInfo NewImage( long userId, long albumId, long sectionId, ImageInfo image, bool externalLinks )
 		{
-			return this.NewImage( userId, albumId, sectionId, image, false, externalLinks );
+			return this.NewImage( userId, albumId, sectionId, image, externalLinks, false );
 		}
 
-		public ImageInfo NewImage( long userId, long albumId, long sectionId, ImageInfo image, bool setAsProfilePicture, bool externalLinks )
+		public ImageInfo NewImage( long userId, long albumId, long sectionId, ImageInfo image, bool externalLinks, bool setAsProfilePicture )
 		{
 			this.AssertSessionValid();
 			this.AssertParameterValidID( "userId", userId );
@@ -68,6 +68,7 @@ namespace Phanfare.ExternalAPI
 		public int GetImageData( ImageRendition rendition, ref byte[] buffer )
 		{
 			this.AssertSessionValid();
+			this.AssertParameterNotNull( "rendition", rendition );
 
 			HttpWebRequest request = ( WebRequest.Create( rendition.URL ) as HttpWebRequest );
 			request.KeepAlive = true;
