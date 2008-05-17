@@ -36,11 +36,11 @@ public class PhanfareService {
 
 	public String sessionCookie;
 
-	public PhanfareService(String apiKey, String apiSecret) {
+	public PhanfareService(String apiKey, String apiSecret) throws PhanfareException {
 		this(apiKey, apiSecret, false);
 	}
 
-	public PhanfareService(String apiKey, String apiSecret, boolean useHttps) {
+	public PhanfareService(String apiKey, String apiSecret, boolean useHttps) throws PhanfareException {
 		this.assertParameterNotNullOrEmpty("apiKey", apiKey);
 		this.assertParameterNotNullOrEmpty("apiSecret", apiSecret);
 		_apiKey = apiKey;
@@ -920,28 +920,24 @@ public class PhanfareService {
 		return totalBytes;
 	}
 
-	private void assertSessionValid() {
-		if ((this.sessionCookie == null) || (this.sessionCookie.isEmpty() == true)) {
-			// TODO
-		}
+	private void assertSessionValid() throws PhanfareException {
+		if ((this.sessionCookie == null) || (this.sessionCookie.length() == 0))
+			throw new PhanfareException("Session is not valid");
 	}
 
-	private void assertParameterNotNull(String name, Object value) {
-		if (value == null) {
-			// TODO
-		}
+	private void assertParameterNotNull(String name, Object value) throws PhanfareException {
+		if (value == null)
+			throw new PhanfareException("Parameter " + name + " must not be null");
 	}
 
-	private void assertParameterNotNullOrEmpty(String name, String value) {
-		if ((value == null) || (value.isEmpty() == true)) {
-			// TODO
-		}
+	private void assertParameterNotNullOrEmpty(String name, String value) throws PhanfareException {
+		if ((value == null) || (value.length() == 0))
+			throw new PhanfareException("Parameter " + name + " must not be null or empty");
 	}
 
-	private void assertParameterValidId(String name, long id) {
-		if (id <= 0) {
-			// TODO
-		}
+	private void assertParameterValidId(String name, long id) throws PhanfareException {
+		if (id <= 0)
+			throw new PhanfareException("Parameter " + name + " must be a valid ID");
 	}
 
 	private static Map methodCall(String methodName) {
