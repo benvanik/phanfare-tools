@@ -1,10 +1,6 @@
 package com.phanfare.api;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
@@ -757,47 +753,6 @@ public class PhanfareService {
 		ht.put("image_id", new Long(imageId));
 		ht.put("hidden", new Boolean(isHidden));
 		this.makeRequest(ht);
-	}
-
-	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, String sourceFileName)
-			throws PhanfareException {
-		return this.newImage(userId, albumId, sectionId, image, sourceFileName, false, false);
-	}
-
-	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, String sourceFileName,
-			boolean externalLinks) throws PhanfareException {
-		return this.newImage(userId, albumId, sectionId, image, sourceFileName, externalLinks, false);
-	}
-
-	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, String sourceFileName,
-			boolean externalLinks, boolean setAsProfilePicture) throws PhanfareException {
-		this.assertParameterNotNullOrEmpty("sourceFileName", sourceFileName);
-		File file = new File(sourceFileName);
-		if (file.exists() == false)
-			throw new PhanfareException(sourceFileName + " is not a valid filename");
-		if (file.canRead() == false)
-			throw new PhanfareException(sourceFileName + " is not readable");
-		long length = file.length();
-		if (length == 0)
-			throw new PhanfareException(sourceFileName + " has a length of 0");
-		image.fileName = sourceFileName;
-		FileInputStream sourceStream = null;
-		try {
-			sourceStream = new FileInputStream(file);
-			return this.newImage(userId, albumId, sectionId, image, sourceStream, length, externalLinks,
-					setAsProfilePicture);
-		} catch (FileNotFoundException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-			return null;
-		} finally {
-			if (sourceStream != null) {
-				try {
-					sourceStream.close();
-				} catch (IOException ex) {
-				}
-			}
-		}
 	}
 
 	public ImageInfo newImage(long userId, long albumId, long sectionId, ImageInfo image, InputStream sourceStream,

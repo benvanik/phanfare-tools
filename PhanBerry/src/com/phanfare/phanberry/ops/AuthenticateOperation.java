@@ -10,8 +10,8 @@ public class AuthenticateOperation extends BaseOperation {
 	private String _password;
 
 	public AuthenticateOperation(String emailAddress, String password) {
-		_emailAddress = emailAddress;
-		_password = password;
+		_emailAddress = emailAddress.trim();
+		_password = password.trim();
 	}
 
 	public boolean execute(ObjectStore store, PhanfareService service, Session session) throws PhanfareException {
