@@ -14,7 +14,13 @@ public class SimpleTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		PhanfareService service = new PhanfareService("XXXX", "YYYY");
+		PhanfareService service;
+		try {
+			service = new PhanfareService("XXXX", "YYYY");
+		} catch (PhanfareException ex) {
+			ex.printStackTrace();
+			return;
+		}
 		try {
 			Session session = service.authenticate("foo@foo.com", "debug");
 			Year[] years = service.getYearList(session.userId);
