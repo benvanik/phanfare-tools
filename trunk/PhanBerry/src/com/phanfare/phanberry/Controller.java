@@ -8,15 +8,26 @@ import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.EventInjector;
 import net.rim.device.api.ui.UiApplication;
 
+import com.phanfare.phanberry.cache.ObjectStore;
 import com.phanfare.phanberry.io.ImageFileListener;
+import com.phanfare.phanberry.ui.NewImageScreen;
+import com.phanfare.phanberry.ui.PickImageScreen;
 
 public class Controller extends Thread {
+	public ObjectStore objectStore;
+	public WorkQueue workQueue;
 	public Options options;
+
+	private PickImageScreen _pickImageScreen;
 	private ImageFileListener _fileListener;
 	private boolean _isRunning;
 
-	public Controller(Options options) {
+	public Controller(ObjectStore objectStore, WorkQueue workQueue, Options options) {
+		this.objectStore = objectStore;
+		this.workQueue = workQueue;
 		this.options = options;
+		this.setup();
+		this.start();
 	}
 
 	public void setup() {
@@ -39,11 +50,20 @@ public class Controller extends Thread {
 		_isRunning = true;
 		while (_isRunning == true) {
 			try {
-				Thread.sleep(600000);
+				Thread.sleep(5 * 60 * 1000);
 			} catch (InterruptedException e) {
 			}
 		}
 		this.destroy();
+	}
+
+	public void showPicker() {
+		if (_pickImageScreen == null) {
+			_pickImageScreen = new PickImageScreen();
+		}
+		UiApplication app = UiApplication.getUiApplication();
+		app.pushScreen(_pickImageScreen);
+		this.launchCamera();
 	}
 
 	public void launchCamera() {
@@ -58,9 +78,13 @@ public class Controller extends Thread {
 	}
 
 	public void processFiles(Vector files) {
+		this.closeCamera();
+		UiApplication app = UiApplication.getUiApplication();
+		app.activate();
 		for (int n = 0; n < files.size(); n++) {
 			String path = (String) files.elementAt(n);
-			// Handle path
+			NewImageScreen newImageScreen = new NewImageScreen(this.workQueue, this, path);
+			app.pushModalScreen(newImageScreen);
 		}
 	}
 }

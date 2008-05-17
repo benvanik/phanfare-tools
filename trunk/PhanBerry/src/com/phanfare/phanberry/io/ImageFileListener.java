@@ -19,7 +19,7 @@ public class ImageFileListener implements FileSystemJournalListener {
 	}
 
 	public void setRootPath(String rootPath) {
-		_rootPath = rootPath;
+		_rootPath = rootPath.toLowerCase();
 	}
 
 	public void fileJournalChanged() {
@@ -41,8 +41,9 @@ public class ImageFileListener implements FileSystemJournalListener {
 				switch (entry.getEvent()) {
 				case FileSystemJournalEntry.FILE_ADDED:
 					String lowerPath = path.toLowerCase();
-					if (lowerPath.startsWith(_rootPath) == false)
+					if (lowerPath.startsWith(_rootPath) == false) {
 						continue;
+					}
 					if (lowerPath.endsWith(".jpg") == true) {
 						foundPaths.addElement(path);
 					}

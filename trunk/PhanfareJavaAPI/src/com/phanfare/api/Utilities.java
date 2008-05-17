@@ -9,7 +9,7 @@ class Utilities {
 		else if (list.length == 1)
 			return Long.toString(list[0]);
 		else {
-			StringBuilder sb = new StringBuilder(list.length * 8);
+			StringBuffer sb = new StringBuffer();
 			for (int n = 0; n < list.length; n++) {
 				if (n > 0)
 					sb.append(',');
