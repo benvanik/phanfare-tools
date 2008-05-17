@@ -7,6 +7,8 @@ import com.phanfare.api.PhanfareService;
 import com.phanfare.api.Section;
 import com.phanfare.api.Session;
 import com.phanfare.api.Year;
+import com.phanfare.api.platform.DefaultPlatformUtilities;
+import com.phanfare.api.platform.PlatformUtilities;
 
 public class SimpleTest {
 
@@ -14,9 +16,10 @@ public class SimpleTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		DefaultPlatformUtilities platform = new DefaultPlatformUtilities();
 		PhanfareService service;
 		try {
-			service = new PhanfareService("XXXX", "YYYY");
+			service = new PhanfareService("XXXX", "YYYY", (PlatformUtilities) platform);
 		} catch (PhanfareException ex) {
 			ex.printStackTrace();
 			return;
