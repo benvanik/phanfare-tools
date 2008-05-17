@@ -1,30 +1,23 @@
 package com.phanfare.api;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.GZIPInputStream;
 
 import org.json.me.JSONArray;
 import org.json.me.JSONException;
 import org.json.me.JSONObject;
 
+import com.phanfare.api.platform.PlatformUtilities;
 import com.phanfare.util.MD5;
 
 public class PhanfareService {
@@ -33,18 +26,22 @@ public class PhanfareService {
 	private String _apiKey;
 	private String _apiSecret;
 	private boolean _useHttps;
+	private PlatformUtilities _platform;
 
 	public String sessionCookie;
 
-	public PhanfareService(String apiKey, String apiSecret) throws PhanfareException {
-		this(apiKey, apiSecret, false);
+	public PhanfareService(String apiKey, String apiSecret, PlatformUtilities platform) throws PhanfareException {
+		this(apiKey, apiSecret, platform, false);
 	}
 
-	public PhanfareService(String apiKey, String apiSecret, boolean useHttps) throws PhanfareException {
+	public PhanfareService(String apiKey, String apiSecret, PlatformUtilities platform, boolean useHttps)
+			throws PhanfareException {
 		this.assertParameterNotNullOrEmpty("apiKey", apiKey);
 		this.assertParameterNotNullOrEmpty("apiSecret", apiSecret);
+		this.assertParameterNotNull("platform", platform);
 		_apiKey = apiKey;
 		_apiSecret = apiSecret;
+		_platform = platform;
 		_useHttps = useHttps;
 		this.sessionCookie = "";
 	}
@@ -52,7 +49,7 @@ public class PhanfareService {
 	public Session authenticate(String emailAddress, String password) throws PhanfareException {
 		this.assertParameterNotNullOrEmpty("emailAddress", emailAddress);
 		this.assertParameterNotNullOrEmpty("password", password);
-		Map ht = methodCall("authenticate");
+		Hashtable ht = methodCall("authenticate");
 		ht.put("email_address", emailAddress);
 		ht.put("password", password);
 		String responseString = this.makeRequest(ht, true);
@@ -76,7 +73,7 @@ public class PhanfareService {
 		this.assertParameterNotNullOrEmpty("emailAddress", emailAddress);
 		this.assertParameterNotNullOrEmpty("firstName", firstName);
 		this.assertParameterNotNullOrEmpty("lastName", lastName);
-		Map ht = methodCall("authenticate");
+		Hashtable ht = methodCall("authenticate");
 		ht.put("email_address", emailAddress);
 		ht.put("first_name", firstName);
 		ht.put("last_name", lastName);
@@ -108,7 +105,7 @@ public class PhanfareService {
 
 	public NewsItem[] getNewsFeed(Integer maximumItems, Date showSince) throws PhanfareException {
 		this.assertSessionValid();
-		Map ht = methodCall("getnewsfeed");
+		Hashtable ht = methodCall("getnewsfeed");
 		if (maximumItems != null)
 			ht.put("maximum_item_count", maximumItems);
 		if (showSince != null)
@@ -133,7 +130,7 @@ public class PhanfareService {
 
 	public GroupInfo[] getMyGroups() throws PhanfareException {
 		this.assertSessionValid();
-		Map ht = methodCall("getmygroups");
+		Hashtable ht = methodCall("getmygroups");
 		String responseString = this.makeRequest(ht);
 		if (responseString == null)
 			return null;
@@ -175,7 +172,7 @@ public class PhanfareService {
 			throws PhanfareException {
 		this.assertSessionValid();
 
-		Map ht;
+		Hashtable ht;
 		if (forGroup == true) {
 			ht = methodCall("getgrouprelations");
 			ht.put("group_id", new Long(groupId));
@@ -216,7 +213,7 @@ public class PhanfareService {
 	}
 
 	private Year[] getYearList(String parameterName, long value) throws PhanfareException {
-		Map ht = methodCall("getyearlist");
+		Hashtable ht = methodCall("getyearlist");
 		ht.put(parameterName, new Long(value));
 		String responseString = this.makeRequest(ht);
 		if (responseString == null)
@@ -307,7 +304,7 @@ public class PhanfareService {
 		if ((albumIds != null) && (albumIds.length == 0))
 			return new Album[0];
 
-		Map ht = methodCall("getalbumlist");
+		Hashtable ht = methodCall("getalbumlist");
 		ht.put(parameterName, new Long(value));
 		if (modifiedAfter != null)
 			ht.put("modified_after", modifiedAfter);
@@ -339,7 +336,7 @@ public class PhanfareService {
 		this.assertSessionValid();
 		this.assertParameterValidId("userId", userId);
 		this.assertParameterValidId("albumId", albumId);
-		Map ht = methodCall("getalbum");
+		Hashtable ht = methodCall("getalbum");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		String responseString = this.makeRequest(ht);
@@ -358,7 +355,7 @@ public class PhanfareService {
 	public Album getMobileAlbum(long userId, boolean useExisting) throws PhanfareException {
 		this.assertSessionValid();
 		this.assertParameterValidId("userId", userId);
-		Map ht = methodCall("getalbum");
+		Hashtable ht = methodCall("getalbum");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(1));
 		ht.put("mobile", new Boolean(true));
@@ -384,7 +381,7 @@ public class PhanfareService {
 		this.assertSessionValid();
 		this.assertParameterValidId("userId", userId);
 		this.assertParameterValidId("albumId", albumId);
-		Map ht = methodCall("getimages");
+		Hashtable ht = methodCall("getimages");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("image_mode", "specificalbum");
@@ -429,7 +426,7 @@ public class PhanfareService {
 		this.assertParameterValidId("userId", userId);
 		this.assertParameterValidId("albumId", albumId);
 		this.assertParameterValidId("sectionId", sectionId);
-		Map ht = methodCall("getsectionimages");
+		Hashtable ht = methodCall("getsectionimages");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("section_id", new Long(sectionId));
@@ -468,7 +465,7 @@ public class PhanfareService {
 		this.assertParameterValidId("albumId", albumId);
 		this.assertParameterValidId("sectionId", sectionId);
 		this.assertParameterValidId("imageId", imageId);
-		Map ht = methodCall("getimageinfo");
+		Hashtable ht = methodCall("getimageinfo");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("section_id", new Long(sectionId));
@@ -516,7 +513,7 @@ public class PhanfareService {
 
 	private ImageInfo[] getRandomImages(String parameterName, long value, int mode, int imageCount,
 			boolean externalLinks) throws PhanfareException {
-		Map ht = methodCall("getimages");
+		Hashtable ht = methodCall("getimages");
 		ht.put(parameterName, new Long(value));
 		switch (mode) {
 		default:
@@ -563,7 +560,7 @@ public class PhanfareService {
 		this.assertParameterValidId("userId", userId);
 		this.assertParameterNotNull("album", album);
 		this.assertParameterNotNull("groups", groups);
-		Map ht = methodCall("newalbum");
+		Hashtable ht = methodCall("newalbum");
 		ht.put("target_uid", new Long(userId));
 		if ((album.name != null) && (album.name.length() > 0))
 			ht.put("album_name", album.name);
@@ -604,7 +601,7 @@ public class PhanfareService {
 		this.assertParameterValidId("userId", userId);
 		this.assertParameterValidId("albumId", albumId);
 		this.assertParameterNotNull("section", section);
-		Map ht = methodCall("newsection");
+		Hashtable ht = methodCall("newsection");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		if ((section.name != null) && (section.name.length() > 0))
@@ -632,7 +629,7 @@ public class PhanfareService {
 		this.assertSessionValid();
 		this.assertParameterValidId("userId", userId);
 		this.assertParameterValidId("albumId", albumId);
-		Map ht = methodCall("deletealbum");
+		Hashtable ht = methodCall("deletealbum");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("to_trash", new Boolean(!deleteForever));
@@ -649,7 +646,7 @@ public class PhanfareService {
 		this.assertParameterValidId("userId", userId);
 		this.assertParameterValidId("albumId", albumId);
 		this.assertParameterValidId("sectionId", sectionId);
-		Map ht = methodCall("deletesection");
+		Hashtable ht = methodCall("deletesection");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("section_id", new Long(sectionId));
@@ -668,7 +665,7 @@ public class PhanfareService {
 		this.assertParameterValidId("albumId", albumId);
 		this.assertParameterValidId("sectionId", sectionId);
 		this.assertParameterValidId("imageId", imageId);
-		Map ht = methodCall("deleteimage");
+		Hashtable ht = methodCall("deleteimage");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("section_id", new Long(sectionId));
@@ -686,7 +683,7 @@ public class PhanfareService {
 		this.assertParameterValidId("albumId", albumId);
 		this.assertParameterNotNullOrEmpty("fieldToUpdate", fieldToUpdate);
 		this.assertParameterNotNull("fieldValue", fieldValue);
-		Map ht = methodCall("updatealbum");
+		Hashtable ht = methodCall("updatealbum");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("field_to_update", fieldToUpdate);
@@ -703,7 +700,7 @@ public class PhanfareService {
 		this.assertParameterValidId("sectionId", sectionId);
 		this.assertParameterNotNullOrEmpty("fieldToUpdate", fieldToUpdate);
 		this.assertParameterNotNull("fieldValue", fieldValue);
-		Map ht = methodCall("updatesection");
+		Hashtable ht = methodCall("updatesection");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("section_id", new Long(sectionId));
@@ -722,7 +719,7 @@ public class PhanfareService {
 		this.assertParameterValidId("imageId", imageId);
 		this.assertParameterNotNullOrEmpty("fieldToUpdate", fieldToUpdate);
 		this.assertParameterNotNull("fieldValue", fieldValue);
-		Map ht = methodCall("updateimage");
+		Hashtable ht = methodCall("updateimage");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("section_id", new Long(sectionId));
@@ -740,7 +737,7 @@ public class PhanfareService {
 		this.assertParameterValidId("sectionId", sectionId);
 		this.assertParameterValidId("imageId", imageId);
 		this.assertParameterNotNull("caption", caption);
-		Map ht = methodCall("updatecaption");
+		Hashtable ht = methodCall("updatecaption");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("section_id", new Long(sectionId));
@@ -756,7 +753,7 @@ public class PhanfareService {
 		this.assertParameterValidId("albumId", albumId);
 		this.assertParameterValidId("sectionId", sectionId);
 		this.assertParameterValidId("imageId", imageId);
-		Map ht = methodCall("hideimage");
+		Hashtable ht = methodCall("hideimage");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("section_id", new Long(sectionId));
@@ -826,7 +823,7 @@ public class PhanfareService {
 		this.assertParameterNotNullOrEmpty("image.fileName", image.fileName);
 		this.assertParameterNotNull("sourceStream", sourceStream);
 
-		Map ht = methodCall("newimage");
+		Hashtable ht = methodCall("newimage");
 		ht.put("target_uid", new Long(userId));
 		ht.put("album_id", new Long(albumId));
 		ht.put("section_id", new Long(sectionId));
@@ -864,60 +861,8 @@ public class PhanfareService {
 	public long getImageData(ImageRendition rendition, OutputStream outputStream) throws PhanfareException {
 		this.assertSessionValid();
 		this.assertParameterNotNull("rendition", rendition);
-
-		URL url;
-		try {
-			url = new URL(rendition.url);
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return -1;
-		}
-		URLConnection c;
-		try {
-			c = url.openConnection();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return -1;
-		}
-		c.setConnectTimeout(60 * 1000);
-		c.setReadTimeout(60 * 1000);
-		c.setUseCaches(true);
-		c.addRequestProperty("User-Agent", "PhanfareJavaAPI");
-		c.addRequestProperty("cookie", "phanfare2=" + this.sessionCookie + "; ");
-		c.addRequestProperty("Accept-Encoding", "gzip");
-		BufferedInputStream stream;
-		try {
-			stream = new BufferedInputStream(new GZIPInputStream(c.getInputStream()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return -1;
-		}
-		long totalBytes = 0;
-		byte[] buffer = new byte[64 * 1024];
-		try {
-			int read = 0;
-			do {
-				read = stream.read(buffer);
-				if (read == -1)
-					break;
-				totalBytes += read;
-				outputStream.write(buffer, 0, read);
-			} while (read > 0);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return -1;
-		}
-		try {
-			stream.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return totalBytes;
+		this.assertParameterNotNull("outputStream", outputStream);
+		return _platform.download(this.sessionCookie, rendition.url, outputStream);
 	}
 
 	private void assertSessionValid() throws PhanfareException {
@@ -940,110 +885,27 @@ public class PhanfareService {
 			throw new PhanfareException("Parameter " + name + " must be a valid ID");
 	}
 
-	private static Map methodCall(String methodName) {
-		HashMap ht = new HashMap(10);
+	private static Hashtable methodCall(String methodName) {
+		Hashtable ht = new Hashtable(10);
 		ht.put("method", methodName);
 		return ht;
 	}
 
-	private String makeRequest(Map parameters) {
+	private String makeRequest(Hashtable parameters) {
 		return this.makeRequest(parameters, _useHttps, null, 0);
 	}
 
-	private String makeRequest(Map parameters, boolean secure) {
+	private String makeRequest(Hashtable parameters, boolean secure) {
 		return this.makeRequest(parameters, secure, null, 0);
 	}
 
-	private String makeRequest(Map parameters, InputStream sourceStream, long length) {
+	private String makeRequest(Hashtable parameters, InputStream sourceStream, long length) {
 		return this.makeRequest(parameters, _useHttps, sourceStream, length);
 	}
 
-	private String makeRequest(Map parameters, boolean secure, InputStream sourceStream, long length) {
-		URL url;
-		try {
-			url = new URL(makeUrl(parameters, secure));
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return null;
-		}
-		URLConnection c;
-		try {
-			c = url.openConnection();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return null;
-		}
-		// Code to use fiddler:
-		// java.net.ProxySelector.setDefault(new ProxySelector() {
-		// public void connectFailed(URI uri, SocketAddress sa, IOException ioe)
-		// {
-		// }
-		// public List select(URI uri) {
-		// ArrayList l = new ArrayList();
-		// Proxy proxy = new Proxy(Proxy.Type.HTTP, new
-		// InetSocketAddress("localhost", 8888));
-		// l.add(proxy);
-		// return l;
-		// }
-		// });
-		c.setConnectTimeout(60 * 1000);
-		c.setReadTimeout(60 * 1000);
-		c.setUseCaches(false);
-		c.addRequestProperty("User-Agent", "PhanfareJavaAPI");
-		c.addRequestProperty("cookie", "phanfare2=" + this.sessionCookie + "; ");
-		c.addRequestProperty("Accept-Encoding", "gzip");
-		if (sourceStream != null) {
-			c.setRequestProperty("Content-Type", "multipart/form-data");
-			c.setRequestProperty("Content-Length", String.valueOf(length));
-			// request.Method = "POST";
-			try {
-				BufferedInputStream input = new BufferedInputStream(sourceStream);
-				BufferedOutputStream output = new BufferedOutputStream(c.getOutputStream());
-				int read = 0;
-				byte[] buffer = new byte[64 * 1024];
-				do {
-					read = input.read(buffer);
-					if (read < 0)
-						break;
-					output.write(buffer, 0, read);
-				} while (read >= 0);
-			} catch (IOException ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
-				return null;
-			}
-		}
-		BufferedReader stream = null;
-		StringBuilder sb = new StringBuilder();
-		try {
-			try {
-				stream = new BufferedReader(new InputStreamReader(new GZIPInputStream(c.getInputStream())));
-			} catch (IOException ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
-				return null;
-			}
-			try {
-				while (true) {
-					String line = stream.readLine();
-					if (line == null)
-						break;
-					sb.append(line);
-				}
-			} catch (IOException ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
-				return null;
-			}
-		} finally {
-			try {
-				stream.close();
-			} catch (IOException ex) {
-			}
-		}
-		return sb.toString();
+	private String makeRequest(Hashtable parameters, boolean secure, InputStream sourceStream, long length) {
+		String url = makeUrl(parameters, secure);
+		return _platform.makeRequest(this.sessionCookie, url, secure, sourceStream, length);
 	}
 
 	private JSONObject parseResponse(String rawResponse) throws JSONException, PhanfareException {
@@ -1067,7 +929,7 @@ public class PhanfareService {
 		}
 	}
 
-	private String makeUrl(Map parameters, boolean secure) {
+	private String makeUrl(Hashtable parameters, boolean secure) {
 		StringBuilder url = new StringBuilder(150 + (parameters.size() * 50));
 		if (secure == true) {
 			url.append("https://");
