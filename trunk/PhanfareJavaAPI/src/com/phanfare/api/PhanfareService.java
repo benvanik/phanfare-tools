@@ -886,19 +886,21 @@ public class PhanfareService {
 		return new ParameterList(_apiKey, methodName);
 	}
 
-	private String makeRequest(ParameterList parameters) {
+	private String makeRequest(ParameterList parameters) throws PhanfareException {
 		return this.makeRequest(parameters, _useHttps, null, 0);
 	}
 
-	private String makeRequest(ParameterList parameters, boolean secure) {
+	private String makeRequest(ParameterList parameters, boolean secure) throws PhanfareException {
 		return this.makeRequest(parameters, secure, null, 0);
 	}
 
-	private String makeRequest(ParameterList parameters, InputStream sourceStream, long length) {
+	private String makeRequest(ParameterList parameters, InputStream sourceStream, long length)
+			throws PhanfareException {
 		return this.makeRequest(parameters, _useHttps, sourceStream, length);
 	}
 
-	private String makeRequest(ParameterList parameters, boolean secure, InputStream sourceStream, long length) {
+	private String makeRequest(ParameterList parameters, boolean secure, InputStream sourceStream, long length)
+			throws PhanfareException {
 		String url = makeUrl(parameters, secure);
 		return _platform.makeRequest(this.sessionCookie, url, secure, sourceStream, length);
 	}

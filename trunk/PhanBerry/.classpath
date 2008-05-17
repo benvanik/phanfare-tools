@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="com/phanfare/api/platform/DefaultPlatformUtilities.java|com/phanfare/api/test/*.java" kind="src" path="api"/>
+	<classpathentry exported="true" kind="src" path="/.Eclipse.jdw"/>
+	<classpathentry kind="src" path=".tmp"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -36,7 +36,7 @@ public class DefaultPlatformUtilities extends PlatformUtilities {
 		c.setReadTimeout(60 * 1000);
 		c.setUseCaches(true);
 		c.addRequestProperty("User-Agent", "PhanfareJavaAPI");
-		c.addRequestProperty("cookie", "phanfare2=" + sessionCookie + "; ");
+		c.addRequestProperty("cookie", "phanfare2=" + sessionCookie + ';');
 		c.addRequestProperty("Accept-Encoding", "gzip");
 		BufferedInputStream stream;
 		try {
@@ -104,7 +104,7 @@ public class DefaultPlatformUtilities extends PlatformUtilities {
 		c.setReadTimeout(60 * 1000);
 		c.setUseCaches(false);
 		c.addRequestProperty("User-Agent", "PhanfareJavaAPI");
-		c.addRequestProperty("cookie", "phanfare2=" + sessionCookie + "; ");
+		c.addRequestProperty("cookie", "phanfare2=" + sessionCookie + ';');
 		c.addRequestProperty("Accept-Encoding", "gzip");
 		if (sourceStream != null) {
 			c.setRequestProperty("Content-Type", "multipart/form-data");
@@ -115,12 +115,9 @@ public class DefaultPlatformUtilities extends PlatformUtilities {
 				BufferedOutputStream output = new BufferedOutputStream(c.getOutputStream());
 				int read = 0;
 				byte[] buffer = new byte[64 * 1024];
-				do {
-					read = input.read(buffer);
-					if (read < 0)
-						break;
+				while ((read = input.read(buffer)) > 0) {
 					output.write(buffer, 0, read);
-				} while (read >= 0);
+				}
 			} catch (IOException ex) {
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
@@ -138,11 +135,10 @@ public class DefaultPlatformUtilities extends PlatformUtilities {
 				return null;
 			}
 			try {
-				while (true) {
-					String line = stream.readLine();
-					if (line == null)
-						break;
-					sb.append(line);
+				int read = 0;
+				char[] buffer = new char[16 * 1024];
+				while ((read = stream.read(buffer)) > 0) {
+					sb.append(buffer, 0, read);
 				}
 			} catch (IOException ex) {
 				// TODO Auto-generated catch block
