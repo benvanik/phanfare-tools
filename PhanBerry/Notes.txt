@@ -1,0 +1,9 @@
+Blackberry Enterprise Server Limitations
+
+By default, the BlackBerry Enterprise Server (BES) limits the response size of a single HTTP response to 128K.
+If you try to fetch anything bigger your application will receive a 413 (Request Entity Too Large) response code.
+To get around this you must use the BES management console to change the value of the Maximum number of kilobytes
+per connection field to a higher value, up to 1024K. 
+Note that this limit also applies to the MDS simulator, so you'll need to change the simulator's settings as well.
+Edit the mds\config\rimpublic.property file in your JDE installation directory and change the value of the
+IPPP.connection.MaxNumberOfKBytesToSend property to match the BES setting and then restart the simulator.

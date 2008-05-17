@@ -1,0 +1,10 @@
+MIDlet-Name: PhanBerry
+MIDlet-Version: 2.0.0.0
+MIDlet-Vendor: Ben Vanik
+MIDlet-Description: Phanfare Photo Capture
+MIDlet-Jar-URL: PhanBerry.jar
+MIDlet-Jar-Size: 0
+MicroEdition-Profile: MIDP-2.0
+MicroEdition-Configuration: CLDC-1.1
+MIDlet-1: PhanBerry,,
+RIM-MIDlet-Flags-1: 1

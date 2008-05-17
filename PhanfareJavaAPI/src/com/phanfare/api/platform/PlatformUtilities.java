@@ -10,5 +10,5 @@ public abstract class PlatformUtilities {
 			throws PhanfareException;
 
 	public abstract String makeRequest(String sessionCookie, String url, boolean secure, InputStream sourceStream,
-			long length);
+			long length) throws PhanfareException;
 }
