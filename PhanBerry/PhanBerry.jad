@@ -3,28 +3,28 @@ MIDlet-Version: 0.0
 MIDlet-Jar-Size: 0
 RIM-COD-URL-4: PhanBerry-4.cod
 RIM-COD-URL-3: PhanBerry-3.cod
-RIM-COD-SHA1-4: 84 9b e2 ea 13 48 15 6b 3e 19 c6 f2 34 e4 4c 5a 42 3d cb 00
+RIM-COD-SHA1-4: 8a c6 92 ca 1b 81 ec 52 de 85 a3 70 ae 62 b9 e0 3d b8 f4 44
 RIM-COD-Module-Dependencies: net_rim_cldc,net_rim_bbapi_invoke
 RIM-COD-URL-2: PhanBerry-2.cod
-RIM-COD-SHA1-3: d0 93 1b e2 b8 d2 89 86 30 51 78 c9 a1 79 40 6d a3 61 78 be
+RIM-COD-SHA1-3: 31 76 98 a7 98 a0 6b ca ec 83 ea 61 d0 78 e8 1e 9c 17 0c 76
 MicroEdition-Configuration: CLDC-1.1
 MIDlet-Jar-URL: PhanBerry.jar
-RIM-COD-SHA1-2: d0 ca f3 42 97 2d ad b2 fb 33 87 6f 87 75 ff 33 41 1b f5 51
+RIM-COD-SHA1-2: de 03 85 92 da 28 c5 92 c6 92 fc 07 5f 56 db d1 10 b4 e0 68
 RIM-COD-URL-1: PhanBerry-1.cod
-RIM-COD-Size-4: 57052
-RIM-COD-SHA1-1: 88 3f 77 f9 60 8f e0 2e 44 94 f6 b9 10 1e d7 aa 7d b3 d0 f0
+RIM-COD-Size-4: 63580
+RIM-COD-SHA1-1: 42 ec 87 cc 1e 0b 72 7b 6e ae 49 e7 61 72 54 bd 59 ad fe e4
 RIM-COD-Size-3: 48660
 RIM-COD-Size-2: 30824
 RIM-MIDlet-Flags-1: 0
-RIM-COD-Size-1: 55460
+RIM-COD-Size-1: 53648
 RIM-COD-Module-Name: PhanBerry
-RIM-COD-Size: 56076
+RIM-COD-Size: 67116
 MIDlet-Name: PhanBerry
-RIM-COD-Creation-Time: 1211059863
+RIM-COD-Creation-Time: 1211086336
 RIM-MIDlet-Position-1: 1
 MIDlet-1: ,,
 RIM-COD-URL: PhanBerry.cod
 MIDlet-Description: Phanfare Photo Capture
-RIM-COD-SHA1: f1 c2 9d 82 0b 09 d0 07 e4 a1 fa 50 04 05 e3 ff f0 c1 54 0f
+RIM-COD-SHA1: de 73 10 9f 71 4d 4e 23 f4 9f 86 6c 90 44 4e 75 25 3b 29 98
 MicroEdition-Profile: MIDP-2.0
 MIDlet-Vendor: <unknown>

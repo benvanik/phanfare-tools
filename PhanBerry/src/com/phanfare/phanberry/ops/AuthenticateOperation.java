@@ -19,7 +19,7 @@ public class AuthenticateOperation extends BaseOperation {
 		if (newSession == null)
 			return false;
 
-		store.setSession(session);
+		store.setSession(newSession);
 
 		return true;
 	}

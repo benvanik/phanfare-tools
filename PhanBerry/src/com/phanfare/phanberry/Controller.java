@@ -5,6 +5,8 @@ import java.util.Vector;
 import net.rim.blackberry.api.invoke.CameraArguments;
 import net.rim.blackberry.api.invoke.Invoke;
 import net.rim.device.api.system.Characters;
+import net.rim.device.api.system.ControlledAccess;
+import net.rim.device.api.system.ControlledAccessException;
 import net.rim.device.api.system.EventInjector;
 import net.rim.device.api.ui.UiApplication;
 
@@ -20,7 +22,7 @@ public class Controller extends Thread {
 
 	private PickImageScreen _pickImageScreen;
 	private ImageFileListener _fileListener;
-	private boolean _isRunning;
+	private volatile boolean _isRunning;
 
 	public Controller(ObjectStore objectStore, WorkQueue workQueue, Options options) {
 		this.objectStore = objectStore;
@@ -71,10 +73,14 @@ public class Controller extends Thread {
 	}
 
 	public void closeCamera() {
-		EventInjector.KeyEvent inject = new EventInjector.KeyEvent(EventInjector.KeyEvent.KEY_DOWN, Characters.ESCAPE,
-				0, 50);
-		inject.post();
-		inject.post();
+		try {
+			EventInjector.KeyEvent inject = new EventInjector.KeyEvent(EventInjector.KeyEvent.KEY_DOWN,
+					Characters.ESCAPE, 0, 50);
+			inject.post();
+			inject.post();
+		} catch (ControlledAccessException ex) {
+			// Don't allow key injection - figure out what to do
+		}
 	}
 
 	public void processFiles(Vector files) {

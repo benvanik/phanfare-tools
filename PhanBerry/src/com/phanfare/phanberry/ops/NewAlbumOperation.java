@@ -7,25 +7,26 @@ import com.phanfare.api.Session;
 import com.phanfare.phanberry.cache.ObjectStore;
 
 public class NewAlbumOperation extends BaseOperation {
-	private int _tempId;
-	private String _name;
-	private long[] _groups;
+	private Album _album;
 
-	public NewAlbumOperation(int tempId, String albumName, long[] groups) {
+	public NewAlbumOperation(Album album) {
 		this.isWrite = true;
-		_tempId = tempId;
-		_name = albumName;
-		_groups = groups;
+		_album = album;
 	}
 
 	public boolean execute(ObjectStore store, PhanfareService service, Session session) throws PhanfareException {
-		Album album = new Album();
-		album.name = _name;
-		Album result = service.newAlbum(session.userId, album, _groups);
+		long[] groups = new long[_album.groups.length];
+		for (int n = 0; n < groups.length; n++) {
+			groups[n] = _album.groups[n].groupId;
+		}
+		Album result = service.newAlbum(session.userId, _album, groups);
 		if (result == null)
 			return false;
-		Album temp = (Album) store.removeTempObject(_tempId);
-		temp.albumId = result.albumId;
+		_album.albumId = result.albumId;
+		for (int n = 0; n < _album.sections.length; n++) {
+			_album.sections[n].albumId = result.albumId;
+		}
+		_album.sections[0].sectionId = result.sections[0].sectionId;
 		return true;
 	}
 }

@@ -8,7 +8,8 @@ import java.io.OutputStream;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
-import net.rim.device.api.compress.GZIPInputStream;
+import net.rim.device.api.ui.UiApplication;
+import net.rim.device.api.ui.component.Status;
 
 import com.phanfare.api.PhanfareException;
 
@@ -20,18 +21,17 @@ public class RIMPlatformUtilities extends PlatformUtilities {
 			c.setRequestMethod(HttpConnection.GET);
 			c.setRequestProperty("User-Agent", "PhanfareJavaAPI");
 			c.setRequestProperty("cookie", "phanfare2=" + sessionCookie + ';');
-			c.setRequestProperty("Accept-Encoding", "gzip");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return -1;
 		}
 		long totalBytes = 0;
-		GZIPInputStream stream = null;
+		InputStream stream = null;
 		try {
 			if (c.getResponseCode() != HttpConnection.HTTP_OK)
 				throw new PhanfareException("HTTP Error " + c.getResponseCode() + ": " + c.getResponseMessage());
-			stream = new GZIPInputStream(c.openInputStream());
+			stream = c.openInputStream();
 			byte[] buffer = new byte[64 * 1024];
 			int read = 0;
 			do {
@@ -57,61 +57,115 @@ public class RIMPlatformUtilities extends PlatformUtilities {
 	public String makeRequest(String sessionCookie, String url, boolean secure, InputStream sourceStream, long length)
 			throws PhanfareException {
 		HttpConnection c = null;
+		StringBuffer sb = new StringBuffer();
 		try {
-			c = (HttpConnection) Connector.open(url);
-			c.setRequestProperty("User-Agent", "PhanfareJavaAPI");
-			c.setRequestProperty("cookie", "phanfare2=" + sessionCookie + ';');
-			c.setRequestProperty("Accept-Encoding", "gzip");
-			if (sourceStream != null) {
-				c.setRequestProperty("Content-Type", "multipart/form-data");
-				c.setRequestProperty("Content-Length", String.valueOf(length));
-				c.setRequestMethod(HttpConnection.POST);
-				try {
-					OutputStream output = c.openOutputStream();
-					int read = 0;
-					byte[] buffer = new byte[64 * 1024];
-					while ((read = sourceStream.read(buffer)) > 0) {
-						output.write(buffer, 0, read);
+			try {
+				c = (HttpConnection) Connector.open(url);
+				c.setRequestProperty("User-Agent", "PhanfareJavaAPI");
+				c.setRequestProperty("cookie", "phanfare2=" + sessionCookie + ';');
+				// c.setRequestProperty("Accept-Encoding", "gzip");
+				if (sourceStream != null) {
+					c.setRequestProperty("Content-Type", "multipart/form-data");
+					// c.setRequestProperty("Content-Length",
+					// String.valueOf(length));
+					c.setRequestMethod(HttpConnection.POST);
+					UiApplication.getUiApplication().invokeAndWait(new Runnable() {
+						public void run() {
+							Status.show("starting write");
+						}
+					});
+					try {
+						OutputStream output = c.openOutputStream();
+						int read = 0;
+						int total = 0;
+						byte[] buffer = new byte[16 * 1024];
+						while ((read = sourceStream.read(buffer)) > 0) {
+							output.write(buffer, 0, read);
+							total += read;
+							final String s = "write " + read + " bytes, total " + total;
+							UiApplication.getUiApplication().invokeAndWait(new Runnable() {
+								public void run() {
+									Status.show(s);
+								}
+							});
+						}
+						output.flush();
+						UiApplication.getUiApplication().invokeAndWait(new Runnable() {
+							public void run() {
+								Status.show("finished write");
+							}
+						});
+					} catch (IOException ex) {
+						// TODO Auto-generated catch block
+						ex.printStackTrace();
+						return null;
 					}
+				} else {
+					c.setRequestMethod(HttpConnection.GET);
+				}
+				UiApplication.getUiApplication().invokeAndWait(new Runnable() {
+					public void run() {
+						Status.show("waiting to read...");
+					}
+				});
+			} catch (IOException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+				return null;
+			}
+			UiApplication.getUiApplication().invokeAndWait(new Runnable() {
+				public void run() {
+					Status.show("starting read...");
+				}
+			});
+			InputStream stream = null;
+			try {
+				try {
+					int responseCode = c.getResponseCode();
+					if (responseCode != HttpConnection.HTTP_OK)
+						throw new PhanfareException("HTTP Error " + responseCode + ": " + c.getResponseMessage());
+					stream = c.openInputStream();
+					// stream = new InputStreamReader(new
+					// GZIPInputStream(c.openInputStream()));
 				} catch (IOException ex) {
 					// TODO Auto-generated catch block
 					ex.printStackTrace();
 					return null;
 				}
-			} else {
-				c.setRequestMethod(HttpConnection.GET);
-			}
-			if (c.getResponseCode() != HttpConnection.HTTP_OK)
-				throw new PhanfareException("HTTP Error " + c.getResponseCode() + ": " + c.getResponseMessage());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		InputStreamReader stream = null;
-		StringBuffer sb = new StringBuffer();
-		try {
-			try {
-				stream = new InputStreamReader(new GZIPInputStream(c.openInputStream()));
-			} catch (IOException ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
-				return null;
-			}
-			try {
-				int read = 0;
-				char[] buffer = new char[16 * 1024];
-				while ((read = stream.read(buffer)) > 0) {
-					sb.append(buffer, 0, read);
+				try {
+					int read = 0;
+					int total = 0;
+					char[] buffer = new char[16 * 1024];
+					InputStreamReader reader = new InputStreamReader(stream);
+					while ((read = reader.read(buffer)) > 0) {
+						sb.append(buffer, 0, read);
+						total += read;
+						final String s = "read " + read + " bytes, total " + total;
+						UiApplication.getUiApplication().invokeAndWait(new Runnable() {
+							public void run() {
+								Status.show(s);
+							}
+						});
+					}
+					UiApplication.getUiApplication().invokeAndWait(new Runnable() {
+						public void run() {
+							Status.show("finished read");
+						}
+					});
+				} catch (IOException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+					return null;
 				}
-			} catch (IOException ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
-				return null;
+			} finally {
+				try {
+					stream.close();
+				} catch (IOException ex) {
+				}
 			}
 		} finally {
 			try {
-				stream.close();
+				c.close();
 			} catch (IOException ex) {
 			}
 		}

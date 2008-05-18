@@ -25,7 +25,12 @@ public class ImageFileListener implements FileSystemJournalListener {
 	public void fileJournalChanged() {
 		Vector foundPaths = new Vector();
 		long nextUSN = FileSystemJournal.getNextUSN();
+		boolean skipping = false;
 		for (long lookUSN = nextUSN - 1; lookUSN >= _lastUSN; --lookUSN) {
+			if (skipping == true) {
+				continue;
+			}
+
 			FileSystemJournalEntry entry = FileSystemJournal.getEntry(lookUSN);
 			if (entry == null) {
 				break;
@@ -41,11 +46,14 @@ public class ImageFileListener implements FileSystemJournalListener {
 				switch (entry.getEvent()) {
 				case FileSystemJournalEntry.FILE_ADDED:
 					String lowerPath = path.toLowerCase();
-					if (lowerPath.startsWith(_rootPath) == false) {
+					if ((lowerPath.startsWith(_rootPath) == false)
+							&& (lowerPath.startsWith("/sdcard/blackberry/pictures/") == false)
+							&& (lowerPath.startsWith("/store/home/user/pictures/") == false)) {
 						continue;
 					}
 					if (lowerPath.endsWith(".jpg") == true) {
 						foundPaths.addElement(path);
+						skipping = true;
 					}
 					break;
 				}

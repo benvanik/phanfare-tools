@@ -13,7 +13,7 @@ public class WorkQueue extends Thread {
 	private PhanfareService _service;
 
 	private Vector _queue;
-	private boolean _isRunning;
+	private volatile boolean _isRunning;
 
 	public WorkQueue(ObjectStore store) throws PhanfareException {
 		_store = store;
