@@ -3,22 +3,22 @@ package com.phanfare.phanberry.cache;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import com.phanfare.api.Album;
 import com.phanfare.api.Session;
 import com.phanfare.api.Year;
 
 public class ObjectStore {
 	private Session _session;
 	private Vector _years;
-	private Hashtable _tempObjects;
-	private int _tempCounter;
 
 	private boolean hasLoadedYears;
 	private boolean isLoadingYears;
 
+	private Album _mobileAlbum;
+	private Album _lastAlbum;
+
 	public ObjectStore() {
 		_years = new Vector();
-		_tempObjects = new Hashtable();
-		_tempCounter = 100;
 	}
 
 	public Session getSession() {
@@ -29,17 +29,20 @@ public class ObjectStore {
 		_session = session;
 	}
 
-	public int addTempObject(Object temp) {
-		synchronized (this) {
-			_tempObjects.put(new Integer(_tempCounter++), temp);
-			return _tempCounter;
-		}
+	public Album getMobileAlbum() {
+		return _mobileAlbum;
 	}
 
-	public Object removeTempObject(int tempId) {
-		synchronized (this) {
-			return _tempObjects.remove(new Integer(tempId));
-		}
+	public void setMobileAlbum(Album album) {
+		_mobileAlbum = album;
+	}
+
+	public Album getLastAlbum() {
+		return _lastAlbum;
+	}
+
+	public void setLastAlbum(Album album) {
+		_lastAlbum = album;
 	}
 
 	public void clear() {

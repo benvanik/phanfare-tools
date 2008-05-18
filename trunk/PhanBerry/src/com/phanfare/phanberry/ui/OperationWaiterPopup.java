@@ -18,7 +18,7 @@ public final class OperationWaiterPopup extends Thread implements OperationListe
 	private PopupScreen _popup;
 	private GaugeField _gaugeField;
 
-	private boolean _failed;
+	private volatile boolean _failed;
 	private int _maxValue;
 	private int _currentValue;
 

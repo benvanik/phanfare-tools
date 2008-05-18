@@ -14,7 +14,6 @@ AutoRestart=0
 [DefFiles
 ]
 [DependencyFiles
-..\PhanfareJavaAPI\src\com\phanfare\api\platform\DefaultPlatformUtilities.java
 ..\PhanfareJavaAPI\src\com\phanfare\api\test\SimpleTest.java
 ]
 [DependsOn
@@ -55,7 +54,6 @@ ExcludeFromBuildAll=0
 ..\PhanfareJavaAPI\src\com\phanfare\api\platform\.svn\format
 ..\PhanfareJavaAPI\src\com\phanfare\api\platform\.svn\text-base\DefaultPlatformUtilities.java.svn-base
 ..\PhanfareJavaAPI\src\com\phanfare\api\platform\.svn\text-base\PlatformUtilities.java.svn-base
-..\PhanfareJavaAPI\src\com\phanfare\api\platform\DefaultPlatformUtilities.java
 ..\PhanfareJavaAPI\src\com\phanfare\api\platform\PlatformUtilities.java
 ..\PhanfareJavaAPI\src\com\phanfare\api\PublicProfile.java
 ..\PhanfareJavaAPI\src\com\phanfare\api\Section.java
@@ -110,9 +108,11 @@ src\com\phanfare\api\platform\.svn\text-base\RIMPlatformUtilities.java.svn-base
 src\com\phanfare\api\platform\RIMPlatformUtilities.java
 src\com\phanfare\phanberry\.svn\entries
 src\com\phanfare\phanberry\.svn\format
+src\com\phanfare\phanberry\.svn\text-base\AppConstants.java.svn-base
 src\com\phanfare\phanberry\.svn\text-base\Controller.java.svn-base
 src\com\phanfare\phanberry\.svn\text-base\Options.java.svn-base
 src\com\phanfare\phanberry\.svn\text-base\Program.java.svn-base
+src\com\phanfare\phanberry\.svn\text-base\WorkQueue.java.svn-base
 src\com\phanfare\phanberry\AppConstants.java
 src\com\phanfare\phanberry\cache\.svn\entries
 src\com\phanfare\phanberry\cache\.svn\format
@@ -134,8 +134,10 @@ src\com\phanfare\phanberry\ops\.svn\text-base\GetYearListOperation.java.svn-base
 src\com\phanfare\phanberry\ops\.svn\text-base\NewAlbumOperation.java.svn-base
 src\com\phanfare\phanberry\ops\.svn\text-base\NewImageOperation.java.svn-base
 src\com\phanfare\phanberry\ops\.svn\text-base\NewSectionOperation.java.svn-base
+src\com\phanfare\phanberry\ops\.svn\text-base\OperationListener.java.svn-base
 src\com\phanfare\phanberry\ops\AuthenticateOperation.java
 src\com\phanfare\phanberry\ops\BaseOperation.java
+src\com\phanfare\phanberry\ops\GetMobileAlbumOperation.java
 src\com\phanfare\phanberry\ops\GetYearAlbumsOperation.java
 src\com\phanfare\phanberry\ops\GetYearListOperation.java
 src\com\phanfare\phanberry\ops\NewAlbumOperation.java
@@ -147,6 +149,7 @@ src\com\phanfare\phanberry\Program.java
 src\com\phanfare\phanberry\ui\.svn\entries
 src\com\phanfare\phanberry\ui\.svn\format
 src\com\phanfare\phanberry\ui\.svn\text-base\NewImageScreen.java.svn-base
+src\com\phanfare\phanberry\ui\.svn\text-base\OperationWaiterPopup.java.svn-base
 src\com\phanfare\phanberry\ui\.svn\text-base\OptionsScreen.java.svn-base
 src\com\phanfare\phanberry\ui\.svn\text-base\PickImageScreen.java.svn-base
 src\com\phanfare\phanberry\ui\.svn\text-base\PostScreen.java.svn-base
