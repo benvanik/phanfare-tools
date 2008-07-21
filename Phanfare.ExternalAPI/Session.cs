@@ -13,6 +13,7 @@ namespace Phanfare.ExternalAPI
 		public bool IsPremium { get; set; }
 		public long FriendGroupID { get; set; }
 		public long FamilyGroupID { get; set; }
+		public long PublicGroupID { get; set; }
 		public string WebsiteTitle { get; set; }
 		public string TimelessHeader { get; set; }
 		public bool IsTimelessFirst { get; set; }
@@ -26,6 +27,7 @@ namespace Phanfare.ExternalAPI
 			session.IsPremium = el.GetAttributeBoolean( "premium" );
 			session.FriendGroupID = el.GetAttributeInt64( "friend_group_id" );
 			session.FamilyGroupID = el.GetAttributeInt64( "family_group_id" );
+			session.PublicGroupID = el.GetAttributeInt64( "public_group_id" );
 			session.WebsiteTitle = el.GetAttribute( "website_title" );
 			session.TimelessHeader = el.GetAttribute( "timeless_header" );
 			session.IsTimelessFirst = el.GetAttributeBoolean( "timeless_first" );

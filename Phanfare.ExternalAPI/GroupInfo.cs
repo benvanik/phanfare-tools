@@ -12,6 +12,7 @@ namespace Phanfare.ExternalAPI
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public long OwnerID { get; set; }
+		public bool CanAdd { get; set; }
 
 		public static GroupInfo FromXML( XmlElement el )
 		{
@@ -20,6 +21,7 @@ namespace Phanfare.ExternalAPI
 			group.Name = el.GetAttribute( "name" );
 			group.Description = el.GetAttribute( "descr" );
 			group.OwnerID = el.GetAttributeInt64( "owner_uid" );
+			group.CanAdd = el.GetAttributeBoolean( "can_add" );
 			return group;
 		}
 	}
