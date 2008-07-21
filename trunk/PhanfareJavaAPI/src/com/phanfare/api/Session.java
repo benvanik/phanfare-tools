@@ -9,6 +9,7 @@ public class Session {
 	public boolean isPremium;
 	public long friendGroupId;
 	public long familyGroupId;
+	public long publicGroupId;
 	public String websiteTitle;
 	public String timelessHeader;
 	public boolean isTimelessFirst;
@@ -22,6 +23,7 @@ public class Session {
 			session.isPremium = object.getBoolean("premium");
 			session.friendGroupId = object.getLong("friend_group_id");
 			session.familyGroupId = object.getLong("family_group_id");
+			session.publicGroupId = object.getLong("public_group_id");
 			session.websiteTitle = object.getString("website_title");
 			session.timelessHeader = object.getString("timeless_header");
 			session.isTimelessFirst = object.getBoolean("timeless_first");

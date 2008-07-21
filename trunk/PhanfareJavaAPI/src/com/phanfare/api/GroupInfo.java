@@ -8,6 +8,7 @@ public class GroupInfo {
 	public String name;
 	public String description;
 	public long ownerId;
+	public boolean canAdd;
 
 	public static GroupInfo fromJson(JSONObject object) {
 		GroupInfo group = new GroupInfo();
@@ -16,6 +17,7 @@ public class GroupInfo {
 			group.name = object.getString("name");
 			group.description = object.getString("descr");
 			group.ownerId = object.getLong("owner_uid");
+			group.canAdd = object.getBoolean("can_add");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
