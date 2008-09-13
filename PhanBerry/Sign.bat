@@ -1,0 +1,1 @@
+java -jar "C:\Program Files\Research In Motion\BlackBerry JDE 4.3.0\bin\SignatureTool.jar" -a -c PhanBerry.cod
