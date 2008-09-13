@@ -51,50 +51,57 @@ public class WorkQueue extends Thread {
 
 	public void run() {
 		while (_isRunning == true) {
-			int queueSize = 0;
-			synchronized (_queue) {
-				queueSize = _queue.size();
-			}
-			while (queueSize == 0) {
-				try {
-					// Wait a looonnngggg time
-					Thread.sleep(5 * 60 * 1000);
-				} catch (InterruptedException e) {
+			BaseOperation operation = null;
+			try {
+				int queueSize = 0;
+				synchronized (_queue) {
+					queueSize = _queue.size();
+				}
+				while (queueSize == 0) {
+					try {
+						// Wait a looonnngggg time
+						Thread.sleep(5 * 60 * 1000);
+					} catch (InterruptedException e) {
+						break;
+					}
+				}
+				if (_isRunning == false)
+					return;
+				synchronized (_queue) {
+					if (_queue.size() == 0)
+						continue;
+					operation = (BaseOperation) _queue.elementAt(0);
+					_queue.removeElementAt(0);
+				}
+				int result = this.runOne(operation);
+				synchronized (operation) {
+					operation.notifyAll();
+				}
+				switch (result) {
+				case RESULT_SUCCESSFUL:
+					if (operation.listener != null) {
+						operation.listener.operationSucceeded();
+					}
+					break;
+				case RESULT_NETWORK_ERROR:
+					// Try again?
+					synchronized (_queue) {
+						_queue.insertElementAt(operation, 0);
+					}
+					break;
+				case RESULT_FAILED:
+				case RESULT_ACCOUNT_ERROR:
+				case RESULT_COHERENCE_ERROR:
+					if (operation.listener != null) {
+						operation.listener.operationFailed();
+					}
 					break;
 				}
-			}
-			if (_isRunning == false)
-				return;
-			BaseOperation operation = null;
-			synchronized (_queue) {
-				if (_queue.size() == 0)
-					continue;
-				operation = (BaseOperation) _queue.elementAt(0);
-				_queue.removeElementAt(0);
-			}
-			int result = this.runOne(operation);
-			synchronized (operation) {
-				operation.notifyAll();
-			}
-			switch (result) {
-			case RESULT_SUCCESSFUL:
-				if (operation.listener != null) {
-					operation.listener.operationSucceeded();
-				}
-				break;
-			case RESULT_NETWORK_ERROR:
-				// Try again?
-				synchronized (_queue) {
-					_queue.insertElementAt(operation, 0);
-				}
-				break;
-			case RESULT_FAILED:
-			case RESULT_ACCOUNT_ERROR:
-			case RESULT_COHERENCE_ERROR:
-				if (operation.listener != null) {
+			} catch (Exception ex) {
+				if ((operation != null) && (operation.listener != null)) {
 					operation.listener.operationFailed();
 				}
-				break;
+				ex.printStackTrace();
 			}
 		}
 	}
